@@ -16,26 +16,30 @@ const Categories = () =>{
     if(categories === null)
             return <Spinner animation="border" variant="primary" />
     return(
-    <Container>
-        <Row>
-            {categories.map(c =>{
-                return(
-                    <Col md={2} xs={12}>
-                        <a href="https://lienminh.vnggames.com/vi-vn/">
-                            <Card >
-                            <Card.Img variant="top" src="" />
-                            <Card.Body>
-                                <Card.Title>{c.name}</Card.Title>
-                                <Button variant="primary">Xem sản phẩm</Button>
-                            </Card.Body>
-                            </Card>
-                        </a>
-                </Col>
-                )
-            })}
-        
-        </Row>
-    </Container>
+            
+            <div>            
+                    <h2 class="title">
+                        <span className="title-word title-word-1">Da</span>
+                        <span className="title-word title-word-2">nh</span>
+                        <span className="title-word title-word-3">M</span>
+                        <span className="title-word title-word-4">ục</span>
+                    </h2>
+                    <Row>
+                    {categories.map(c =>{
+                        return(
+                            <Col md={3} xs={12} className="p-2">
+                                <Card >
+                                <Card.Img variant="top" src="https://tinnhanhplus.com/wp-content/uploads/2020/11/hinh-anh-doremon-xin-chao.jpg" />
+                                <Card.Body>
+                                    <Card.Title className="text-center">{c.name}</Card.Title>                         
+                                </Card.Body>
+                                </Card>
+                        </Col>
+                        )
+                    })}
+                
+                </Row>
+            </div>
     )
 }
 
