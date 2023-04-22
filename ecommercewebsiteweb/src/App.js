@@ -2,13 +2,21 @@ import './App.css';
 import Categories from './components/Categories';
 import Products from './components/Products';
 import Header from './layouts/Header';
+import Footer from './layouts/Footer';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <Header/>
-      <Products/>
-    </>
+      <Container>
+        <Routes>
+          <Route path='' element={<Categories />} />
+        </Routes>
+      </Container>
+      <Footer/>
+    </BrowserRouter>
   );
 }
 
