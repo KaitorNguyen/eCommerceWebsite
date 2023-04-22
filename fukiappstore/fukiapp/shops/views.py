@@ -1,23 +1,50 @@
-from rest_framework import viewsets, generics, filters, parsers
+from rest_framework import viewsets, generics, parsers, permissions
 from rest_framework.decorators import action
 from rest_framework.views import Response
+from rest_framework.filters import OrderingFilter
 from .models import User,Category, Shop, Product
-from .serializers import UserSerializer, CategorySerializer, ShopSerializer, ProductSerializer, ProductDetailSerializer
-from .paginators import ProductPaginator
+from .serializers import UserSerializer, CategorySerializer, ShopSerializer, ShopDetailSerializer, ProductSerializer, ProductDetailSerializer
+from .paginators import CategoryPaginator, ProductPaginator
 
 # Create your views here.
-class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.UpdateAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
     parser_classes = [parsers.MultiPartParser, ]
+
+    def get_permissions(self):
+        if self.action in ['current_user', 'update', 'partial_update']:
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+    @action(methods=['get'], detail=False, url_path='current-user')
+    def current_user(self, request):
+        return Response(UserSerializer(request.user).data)
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+    @action(methods=['get'], detail=True, url_path='products')
+    def products(self, request, pk):
+        c = self.get_object()
+        products = c.products.filter(active=True)
+
+        kw = self.request.query_params.get('kw')
+        if kw:
+            products = products.filter(name__icontains=kw)
+
+        paginator = ProductPaginator()
+        page = paginator.paginate_queryset(products, request)
+
+        return paginator.get_paginated_response(ProductSerializer(page, many=True).data)
+
 class ShopViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Shop.objects.filter(active=True)
-    serializer_class = ShopSerializer
+    serializer_class = ShopDetailSerializer
+    def get_serializer_class(self):
+        if self.action.__eq__('list'):
+            return ShopSerializer
+        return super().get_serializer_class()
 
     @action(methods=['get'], detail=True, url_path='products')
     def products(self, request, pk):
@@ -25,25 +52,30 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView):
         s = self.get_object()
         products = s.proshop.filter(active=True)
 
-        kw = self.request.query_params.get('search')
+        kw = self.request.query_params.get('kw')
         if kw:
             products = products.filter(name__icontains=kw)
 
         return Response(ProductSerializer(products, many=True).data)
 
 
-class ProductViewSet(viewsets.ViewSet, generics.ListAPIView):
+class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Product.objects.filter(active=True)
-    serializer_class = ProductSerializer
+    serializer_class = ProductDetailSerializer
     pagination_class = ProductPaginator
 
-    filter_backends = [filters.OrderingFilter]
+    #Sắp xếp tăng giảm
+    filter_backends = [OrderingFilter]
     ordering_fields = ['name', 'price']
 
+    def get_serializer_class(self):
+        if self.action.__eq__('list'):
+            return ProductSerializer
+        return super().get_serializer_class()
     def get_queryset(self):
         q = self.queryset
 
-        #keyword
+        #Search: keyword
         kw = self.request.query_params.get('kw')
         if kw:
             q = q.filter(name__icontains=kw)
@@ -61,15 +93,6 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView):
         if max_p:
             q = q.filter(price__lte=max_p)
 
-        # #Sắp xếp price_desc_asc
-        # sort = self.request.query_params.get('sort_by')
-        # if sort=='pricedesc':
-        #     q = q.order_by('-price')
-        # else:
-        #     q = q.order_by('price')
         return q
 
-class ProductDetailViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
-    queryset = Product.objects.filter(active=True)
-    serializer_class = ProductDetailSerializer
 

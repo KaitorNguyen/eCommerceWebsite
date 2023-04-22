@@ -24,6 +24,7 @@ class Category(models.Model):
 class Shop(BaseModel):
     name = models.CharField(max_length=255, unique=True)
     description = RichTextField(null=True)
+    avatar = models.ImageField(upload_to='shops/%Y/%m/', null=True)
     user = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='shops')
 
     def __str__(self):
@@ -37,6 +38,8 @@ class Product(BaseModel):
     category = models.ForeignKey(Category, on_delete=models.RESTRICT, related_name='products')
     shop = models.ForeignKey(Shop, on_delete=models.RESTRICT, related_name='proshop')
 
+    class Meta:
+        unique_together = ('name', 'shop')
     def __str__(self):
         return self.name
 

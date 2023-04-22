@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-zr0!ja7@42nml%!$g4i&^m*h%iw1+q6&tkeh03_zzge$u#i06^
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -43,7 +41,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'django_filters',
-    'corsheaders'
+    'corsheaders',
+    'cloudinary_storage',
+    'cloudinary',
+    'oauth2_provider',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +78,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fukiapp.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -90,14 +90,29 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fukidb',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': '12345678',
         'HOST': ''
     }
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-MEDIA_ROOT = '%s/shops/static/' % BASE_DIR
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    )
+}
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dygnuycoh',
+    'API_KEY': '838661887954286',
+    'API_SECRET': 'p-Ua80Fjfx6TJW43MbaMPRhnhb8'
+}
+
+MEDIA_URL = '/fukimedia/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# MEDIA_ROOT = '%s/shops/static/' % BASE_DIR
 
 CKEDITOR_UPLOAD_PATH = "ckeditors/products/"
 
@@ -121,7 +136,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -133,7 +147,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -143,3 +156,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CLIENT_ID = 'z9iWJZj2v2KUhZUrlVcAxDI6H9AlVpXUMRzCbPaH'
+CLIENT_SECRET = 'o31fcr9zXnAevUElQtOqJXzvqHWuw1YmJpbYH1FCXKjAhSMTZZljwk1khOfycorlSsqG4DFFtVMEBTGOXyvDFiznGEucfe2dQaIW5zoNjeVexRDAqXmimyCm5lJNoV1R'

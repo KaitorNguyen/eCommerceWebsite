@@ -3,6 +3,7 @@ from .models import User, Category, Shop, Product
 from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.utils.html import mark_safe
+from cloudinary import CloudinaryImage
 
 #Tùy chỉnh trang admin
 
@@ -38,7 +39,9 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ['avatar']
 
     def avatar(self, product):
-        return mark_safe("<img src='/static/{}' width='120' >".format(product.image.name))
+        image_url = CloudinaryImage(product.image.name).build_url(width=120)
+        return mark_safe("<img src='{}' width='120' >".format(image_url))
+        # return mark_safe("<img src='/static/{}' width='120' >".format(product.image.name))
 
 
 # Register your models here.

@@ -8,10 +8,12 @@ class UserSerializer(serializers.ModelSerializer):
         u.set_password(u.password)
         u.save()
         return u
-
     class Meta:
         model = User
         fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'avatar']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -20,17 +22,25 @@ class CategorySerializer(serializers.ModelSerializer):
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shop
-        fields = ['id', 'name', 'description', 'created_date']
+        fields = ['id', 'name', 'avatar']
+
+class ShopDetailSerializer(ShopSerializer):
+    product_count = serializers.SerializerMethodField(read_only=True)
+    def get_product_count(self, obj):
+        return Product.objects.filter(shop=obj).count()
+    class Meta:
+        model = ShopSerializer.Meta.model
+        fields = ShopSerializer.Meta.fields + ['description', 'created_date', 'product_count']
 
 class ProductSerializer(serializers.ModelSerializer):
-    shop = ShopSerializer()
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image', 'shop']
+        fields = ['id', 'name', 'price', 'image', 'shop_id']
 
 class ProductDetailSerializer(ProductSerializer):
     category = CategorySerializer()
+    shop = ShopSerializer()
     class Meta:
         model = ProductSerializer.Meta.model
-        fields = ProductSerializer.Meta.fields + ['description','category']
+        fields = ProductSerializer.Meta.fields + ['description','category', 'shop']
 
