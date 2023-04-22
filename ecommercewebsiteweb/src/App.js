@@ -9,13 +9,19 @@ import { Container } from 'react-bootstrap';
 function App() {
   return (
     <BrowserRouter>
-      <Header/>
-      <Container>
-        <Routes>
-          <Route path='' element={<Categories />} />
-        </Routes>
-      </Container>
-      <Footer/>
+        <Header/>
+        <Container>
+          <Routes>
+            <Route path='' element={<Categories />} />
+            <Route path='/categories/:categoryId/products' element={<Products />}/>
+          </Routes>
+        </Container>
+        <Container>
+         <Routes>
+            <Route path='' element={<Products/>} />
+         </Routes>
+        </Container>
+        <Footer/>
     </BrowserRouter>
   );
 }

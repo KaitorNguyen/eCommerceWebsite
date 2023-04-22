@@ -1,40 +1,39 @@
 import { useEffect, useState } from "react"
-import API, { endpoints } from "../configs/API"
-import { Button, Container, Form, Nav, NavDropdown, Navbar } from "react-bootstrap"
+import { Button, Container, Form, Nav, Navbar } from "react-bootstrap"
+import { Link,useNavigate } from "react-router-dom"
 
-const Header = ()=>{
-    const [categories, setCategories] = useState([])
+const Header = ()=> {
+    const [q, setQ] = useState("")
+    const nav = useNavigate()
 
-    useEffect(()=>{
-        const loadCategories = async () =>{
-            let res = await API.get(endpoints['categories'])
-            setCategories(res.data)
-        }
 
-        loadCategories()
-    }, [])
+    const search = (evt) => {
+        evt.preventDefault()
+        nav(`/?kw=${q}`) 
+    }
 
+    let homePageUrl = `/`
     return(
         <>
                 <Navbar bg="light" expand="lg" >
-            <Container>
-                <img className="logo" src="/fukilogo.png"/>
+            <Container>                
+                <Link to={homePageUrl}> <img className="logo" src="/fukilogo.png"/></Link>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    <Nav.Link href="#home">Trang chủ</Nav.Link>
+                   <Link to={homePageUrl}>Trang Chủ</Link>
                     <Nav.Link href="#home">About Us</Nav.Link>
-                    {/* {categories.map(c => <Nav.Link href="#link" key={c.id}>{c.name}</Nav.Link>)} */}
                 </Nav>     
-                <Form className="d-flex w-100">
+                <Form onSubmit={search} className="d-flex w-100">
                     <Form.Control
                     type="search"
                     placeholder="Bạn tìm gì hôm nay"
-                    className="me-2 w-100"
+                    className="me-2 w-1"
                     aria-label="Search"
-                    
+                    value={q}
+                    onChange={e => setQ(e.target.value)}
                     />
-                    <Button variant="outline-success">Tìm Kiếm</Button>
+                    <Button className="search_button" type="submit" variant="outline-success">Tìm Kiếm</Button>
                 </Form>
                 </Navbar.Collapse>              
             </Container>
