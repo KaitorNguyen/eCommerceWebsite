@@ -90,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fukidb',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': '12345678',
         'HOST': ''
     }
 }

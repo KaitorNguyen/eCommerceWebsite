@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Category, Shop, Product
+from .models import User, Category, Shop, Product, Review, Comment
 
 class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
@@ -35,7 +35,7 @@ class ShopDetailSerializer(ShopSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image', 'shop_id']
+        fields = ['id', 'name', 'price', 'image']
 
 class ProductDetailSerializer(ProductSerializer):
     category = CategorySerializer()
@@ -44,3 +44,22 @@ class ProductDetailSerializer(ProductSerializer):
         model = ProductSerializer.Meta.model
         fields = ProductSerializer.Meta.fields + ['description','category', 'shop']
 
+class ReviewSerializer(serializers.ModelSerializer):
+    def validate_rate(self, rate):
+        if rate < 1 or rate > 5:
+            raise serializers.ValidationError('Giá trị rate phải nằm trong khoảng từ 1 đến 5')
+        return rate
+    class Meta:
+        model = Review
+        fields = ['id', 'rate', 'content', 'created_date', 'updated_date']
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    replies = serializers.SerializerMethodField()
+    def get_replies(self, obj):
+        replies = Comment.objects.filter(reply_to=obj)
+        serializer = CommentSerializer(replies, many=True)
+        return serializer.data
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'created_date', 'user', 'reply_to', 'replies']

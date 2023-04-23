@@ -43,4 +43,23 @@ class Product(BaseModel):
     def __str__(self):
         return self.name
 
+class ActionBase(BaseModel):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    class Meta:
+        abstract = True
+class Review(ActionBase):
+    rate = models.SmallIntegerField(default=0)
+    content = models.CharField(max_length=255, null=True, blank=True)
+    class Meta:
+        unique_together = ('product', 'user')
+    def __str__(self):
+        return self.content
+class Comment(ActionBase):
+    content = models.CharField(max_length=255)
+    reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    def __str__(self):
+        return self.content
+
+
 
