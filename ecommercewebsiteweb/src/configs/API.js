@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const endpoints = {
     "categories":"/categories/",
-    "products": "/products"
+    "products": "/products/"
 
 }
 
