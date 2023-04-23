@@ -11,12 +11,6 @@ function App() {
     <BrowserRouter>
         <Header/>
         <Container>
-          <Routes>
-            <Route path='' element={<Categories />} />
-            <Route path='/categories/:categoryId/products' element={<Products />}/>
-          </Routes>
-        </Container>
-        <Container>
          <Routes>
             <Route path='' element={<Products/>} />
          </Routes>

@@ -14,9 +14,14 @@ const Products = () =>{
         const loadProducts = async()=>{
         try{
             let e = `${endpoints['products']}?page=${page}`
-            let k = q.get("q")
+            let k = q.get("kw")
             if(k !== null)
                 e += `&kw=${k}`
+
+
+            let cateId = q.get("cateId")
+            if(cateId !== null) 
+                e+=`$category_id=${cateId}`
 
             let res = await API.get(e)
             setProducts(res.data.results)
@@ -35,6 +40,11 @@ const Products = () =>{
     if (products === null)
     return  <Spinner/>
     
+    if(products.length === 0)
+        return 
+        <div className="alert alert-info">        
+            Không tìm thấy sản phẩm
+        </div>
     return(
         <div>
                 <h2 className="title">
