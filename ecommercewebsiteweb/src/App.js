@@ -5,6 +5,7 @@ import Header from './layouts/Header';
 import Footer from './layouts/Footer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
+import ProductsDetail from './components/ProductDetails';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Container>
          <Routes>
             <Route path='' element={<Products/>} />
+            <Route path='/products/:productsId' element={<ProductsDetail/>}/>
          </Routes>
         </Container>
         <Footer/>

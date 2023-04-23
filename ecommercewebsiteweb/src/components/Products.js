@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import { Button, ButtonGroup, Card, Col, Row } from "react-bootstrap"
 import API, { endpoints } from "../configs/API"
 import Spinner from "./Spinner"
-import { useSearchParams } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
+import NotFound from "./NotFound"
 
 
 const Products = () =>{
@@ -19,9 +20,9 @@ const Products = () =>{
                 e += `&kw=${k}`
 
 
-            let cateId = q.get("cateId")
+            let cateId = q.get("category_id")
             if(cateId !== null) 
-                e+=`$category_id=${cateId}`
+                e +=`&category_id=${cateId}`
 
             let res = await API.get(e)
             setProducts(res.data.results)
@@ -34,17 +35,15 @@ const Products = () =>{
         loadProducts()
     }, [page,q])
 
-    const nextPage = () => setPage(current => current + 1)
-    const prevPage = () => setPage(current => current - 1)
+        const nextPage = () => setPage(current => current + 1)
+        const prevPage = () => setPage(current => current - 1)
 
-    if (products === null)
-    return  <Spinner/>
-    
-    if(products.length === 0)
-        return 
-        <div className="alert alert-info">        
-            Không tìm thấy sản phẩm
-        </div>
+        if (products === null)
+        return  <Spinner/>
+        let homePageUrl = '/'
+        if (products.length === 0)      
+            return  <NotFound/>
+
     return(
         <div>
                 <h2 className="title">
@@ -59,15 +58,20 @@ const Products = () =>{
             </ButtonGroup>
              <Row>
                     {products.map(c =>{
-                        return(
+                        let url = `/products/${c.id}`
+                        return(    
+                                                                  
                             <Col md={3} xs={12} className="p-2">
-                                <Card >
-                                <Card.Img variant="top" src="https://tinnhanhplus.com/wp-content/uploads/2020/11/hinh-anh-doremon-xin-chao.jpg" />
-                                <Card.Body>
+                                <Link className="nav nav-link" to={url}>
+                                    <Card >
+                                    <Card.Img variant="top" src="https://tinnhanhplus.com/wp-content/uploads/2020/11/hinh-anh-doremon-xin-chao.jpg" />
+                                    <Card.Body>
                                     <Card.Title className="text-center" key={c.id} >{c.name}</Card.Title>                         
-                                </Card.Body>
-                                </Card>
-                        </Col>
+                                    </Card.Body>
+                                    </Card>
+                                </Link>
+                            </Col>
+                            
                         )
                     })}
                 
