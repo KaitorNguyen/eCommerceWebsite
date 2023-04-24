@@ -48,8 +48,7 @@ const ProductsDetails = () =>{
                                             <span> Giá : </span>
                                             <span className="price"> {productDetails.price} <i>VND</i></span>
                                         </div>
-                                        <div className="_p-features" dangerouslySetInnerHTML={{__html: productDetails.description}}>
-                                            <span> Mô tả về sản phẩm </span>   
+                                        <div className="_p-features" dangerouslySetInnerHTML={{__html: productDetails.description}}>  
                                         </div>
 
                                         <form action="" method="post" accept-charset="utf-8">
