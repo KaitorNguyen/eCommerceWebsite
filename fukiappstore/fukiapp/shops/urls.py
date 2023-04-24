@@ -8,6 +8,7 @@ router.register('categories', views.CategoryViewSet)
 router.register('shops', views.ShopViewSet)
 router.register('products', views.ProductViewSet)
 router.register('comments', views.CommentViewSet)
+router.register('reviews', views.ReviewViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

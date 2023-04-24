@@ -4,11 +4,15 @@ from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.utils.html import mark_safe
 from cloudinary import CloudinaryImage
+from django.contrib.auth.hashers import make_password
 
 #Tùy chỉnh trang admin
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['id', 'username', 'first_name', 'last_name', 'is_staff']
+    def save_model(self, request, user, form, change):
+        user.password = make_password(form.cleaned_data["password"])
+        super().save_model(request, user, form, change)
 
     class Meta:
         model = User
