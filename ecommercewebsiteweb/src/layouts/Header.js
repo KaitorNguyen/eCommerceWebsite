@@ -23,6 +23,7 @@ const Header = ()=> {
     }
 
     let homePageUrl = `/`
+    let aboutUs = `/aboutus`
     return(
         <>            
             <Navbar bg="light" expand="lg">
@@ -32,6 +33,7 @@ const Header = ()=> {
                     <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Link className="nav nav-link" to={homePageUrl}> Trang Chủ </Link>
+                        <Link className="nav nav-link" to={aboutUs}> About Us </Link>
                         <NavDropdown title="Danh mục" id="basic-nav-dropdown">
                         {categories.map(c => {
 

@@ -18,8 +18,7 @@ const ProductsDetails = () =>{
 
         if (productDetails === null)
             return <Spinner/>
-            
-        let homePageUrl ="/"   
+              
         return(
             <div>
                  <h1> {productDetails.price}</h1>
