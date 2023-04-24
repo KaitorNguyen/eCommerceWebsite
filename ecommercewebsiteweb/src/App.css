@@ -1109,3 +1109,51 @@ section {
 	display: flex;
 	justify-content: center;
 }
+
+.ovf{
+	white-space: nowrap;
+  	text-overflow: ellipsis;	
+	max-width: 300px;
+	max-height: 300px;
+	overflow: hidden;
+	font-size: 15px !important;
+}
+
+
+._p-features{
+	overflow-y: scroll;
+	max-width: 1000px;
+	max-height: 300px;
+}
+/* 
+=========================================
+CSS CỦA SHOP NAME */
+
+@import url('https://fonts.googleapis.com/css?family=Gochi+Hand');
+.shop_name{
+	display: inline-block !important;
+	font-family: 'Gochi Hand', cursive !important;
+	font-size: 30px;
+	line-height: 1.5;
+	display: inline;
+	background-image: linear-gradient(
+		  transparent 50%,
+		  #e1fffe 50%,
+		  #b0f8ff 85%,
+		  transparent 85%,
+		  transparent 100%
+	  );
+	  background-repeat: no-repeat;
+	  background-size: 0% 100%;
+	  animation: animatedBackground 2s cubic-bezier(0.645, 0.045, 0.355, 1) 0.5s forwards;
+  }
+  
+  @keyframes animatedBackground {
+	  to {
+		  background-size: 100% 100%;
+	  }
+  }
+.shop_name_display{
+	display:inline-block;
+}
+

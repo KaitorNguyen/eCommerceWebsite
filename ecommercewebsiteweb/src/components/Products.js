@@ -40,7 +40,6 @@ const Products = () =>{
 
         if (products === null)
         return  <Spinner/>
-        let homePageUrl = '/'
         if (products.length === 0)      
             return  <NotFound/>
 
@@ -63,15 +62,14 @@ const Products = () =>{
                                                                   
                             <Col md={3} xs={12} className="p-2">
                                 <Link className="nav nav-link" to={url}>
-                                    <Card >
-                                    <Card.Img variant="top" src="https://tinnhanhplus.com/wp-content/uploads/2020/11/hinh-anh-doremon-xin-chao.jpg" />
+                                    <Card className="" >
+                                    <Card.Img variant="top" src={c.image} />
                                     <Card.Body>
-                                    <Card.Title className="text-center" key={c.id} >{c.name}</Card.Title>                         
+                                    <Card.Title className="text-center ovf" key={c.id} >{c.name}</Card.Title>                         
                                     </Card.Body>
                                     </Card>
                                 </Link>
-                            </Col>
-                            
+                            </Col>                  
                         )
                     })}
                 
