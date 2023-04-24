@@ -23,31 +23,9 @@ const Header = ()=> {
     }
 
     let homePageUrl = `/`
+    let aboutUs = `/aboutus`
     return(
-        <>
-                {/* <Navbar bg="light" expand="lg" >
-            <Container>                
-                <Link to={homePageUrl}> <img className="logo" src="/fukilogo.png"/></Link>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
-                   <Link className="nav-link" to={homePageUrl}>Trang Chủ</Link>
-                    <Nav.Link href="#home">About Us</Nav.Link>
-                </Nav>     
-                <Form onSubmit={search} className="d-flex w-100">
-                    <Form.Control
-                    type="search"
-                    placeholder="Bạn tìm gì hôm nay"
-                    className="me-2 w-1"
-                    aria-label="Search"
-                    value={q}
-                    onChange={e => setQ(e.target.value)}
-                    />
-                    <Button className="search_button" type="submit" variant="outline-success">Tìm Kiếm</Button>
-                </Form>
-                </Navbar.Collapse>              
-            </Container>
-            </Navbar> */}
+        <>            
             <Navbar bg="light" expand="lg">
                 <Container>
                     <Link to={homePageUrl}> <img className="logo" src="/fukilogo.png"/></Link>
@@ -55,10 +33,11 @@ const Header = ()=> {
                     <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Link className="nav nav-link" to={homePageUrl}> Trang Chủ </Link>
+                        <Link className="nav nav-link" to={aboutUs}> About Us </Link>
                         <NavDropdown title="Danh mục" id="basic-nav-dropdown">
                         {categories.map(c => {
 
-                            let url = `/?cateId=${c.id}`
+                            let url = `/?category_id=${c.id}`
                             return <Link className="nav nav-link" to={url} key={c.id}>{c.name}</Link>
                         })}
                             
