@@ -9,10 +9,14 @@ import AboutUs from './components/AboutUs';
 import Shops from './components/Shops';
 import { MyUserContext } from './configs/MyContext';
 import Login from './components/Login';
+import { useReducer } from 'react';
+import MyUserReducer from './reducers/MyUserReducer';
 
 function App() {
+  const [user, dispatch] = useReducer(MyUserReducer,null)
+
   return (
-    <MyUserContext.Provider value="">
+    <MyUserContext.Provider value={[user,dispatch]}>
       <BrowserRouter>
         <Header />
         <Container>
