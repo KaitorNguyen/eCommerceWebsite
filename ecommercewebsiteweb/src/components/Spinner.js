@@ -1,6 +1,6 @@
 const Spinner = () => {
-    return(
-                <svg className="pencil" viewBox="0 0 200 200" width="200px" height="200px" xmlns="http://www.w3.org/2000/svg">
+    return (
+        <svg className="pencil" viewBox="0 0 200 200" width="200px" height="200px" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <clipPath id="pencil-eraser">
                     <rect rx="5" ry="5" width="30" height="30"></rect>

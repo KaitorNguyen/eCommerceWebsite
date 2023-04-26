@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'fukiapp.urls'
 
 TEMPLATES = [
@@ -82,6 +83,7 @@ WSGI_APPLICATION = 'fukiapp.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 import pymysql
+
 pymysql.version_info = (1, 4, 3, "final", 0)
 pymysql.install_as_MySQLdb()
 
@@ -157,5 +159,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CLIENT_ID = 'z9iWJZj2v2KUhZUrlVcAxDI6H9AlVpXUMRzCbPaH'
-CLIENT_SECRET = 'o31fcr9zXnAevUElQtOqJXzvqHWuw1YmJpbYH1FCXKjAhSMTZZljwk1khOfycorlSsqG4DFFtVMEBTGOXyvDFiznGEucfe2dQaIW5zoNjeVexRDAqXmimyCm5lJNoV1R'
+CLIENT_ID = 'EYOSgsLsHyfqNgxnR6lNJWcdQlNB1Ub5F36SSXVo'
+CLIENT_SECRET = 'dvYWxEYpJvoQ77bJrISUwGc3Rej9wYbdwtLTH6dl15kw40bzWULB2RaQsDHVlSvTVS2sUjWkdlkc2GbnpmZirvJalqLhyuekbSBe2pwjy3aF251bM9ZUpKl28WXORpj4'
+
+OAUTH2_PROVIDER = {
+    'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore'
+}

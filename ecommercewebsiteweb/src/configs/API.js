@@ -4,7 +4,9 @@ export const endpoints = {
     "categories":"/categories/",
     "products": "/products/",
     "product-details":(productsId) => `/products/${productsId}/`,
-    "shops":(shopsId) => `/shops/${shopsId}/products/`
+    "shops":(shopsId) => `/shops/${shopsId}/products/`,
+    "login":"/o/token/",
+    "current-user":"/users/current-user/"
 
 }
 

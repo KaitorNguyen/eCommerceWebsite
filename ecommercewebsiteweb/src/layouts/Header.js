@@ -24,6 +24,7 @@ const Header = ()=> {
 
     let homePageUrl = `/`
     let aboutUs = `/aboutus`
+    let login = `/login`
     return(
         <>            
             <Navbar bg="light" expand="lg">
@@ -43,6 +44,7 @@ const Header = ()=> {
                             
                             <NavDropdown.Divider />
                         </NavDropdown>
+                        <Link className="nav nav-link text-warning" to={login}> Đăng nhập </Link>
                     </Nav>
                     <Form onSubmit={search} className="d-flex w-50">
                         <Form.Control
