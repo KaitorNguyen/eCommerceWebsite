@@ -11,9 +11,10 @@ import { MyUserContext } from './configs/MyContext';
 import Login from './components/Login';
 import { useReducer } from 'react';
 import MyUserReducer from './reducers/MyUserReducer';
+import cookie from "react-cookies";
 
 function App() {
-  const [user, dispatch] = useReducer(MyUserReducer,null)
+  const [user, dispatch] = useReducer(MyUserReducer,cookie.load('current-user') || null )
 
   return (
     <MyUserContext.Provider value={[user,dispatch]}>

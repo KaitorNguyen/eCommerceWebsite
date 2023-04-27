@@ -43,7 +43,9 @@ const Header = () => {
     if (user !== null)
         userInfo = (
             <>
-                <Link className="nav nav-link text-danger" to={homePageUrl}> Chào {user.username}  </Link>
+                <Link className="nav nav-link text-danger" to={homePageUrl}>
+                    <img src={user.avatar} alt={user.username} width="40" className="rounded-circle"/>
+                     Chào {user.username}  </Link>
                 <Button onClick={logout} className="btn btn-danger"> Đăng xuất </Button>
             </>
         )
