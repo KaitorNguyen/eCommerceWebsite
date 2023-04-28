@@ -20,7 +20,6 @@ const Header = () => {
     }, [])
     let homePageUrl = `/`
     let aboutUs = `/aboutus`
-    let login = `/login`
 
     const search = (evt) => {
         evt.preventDefault()
@@ -35,7 +34,8 @@ const Header = () => {
 
     let userInfo = (
         <>
-            <Link className="nav nav-link text-warning" to={login}> Đăng nhập </Link>
+            <Link className="nav nav-link text-warning" to='/login'> Đăng nhập </Link>
+            <Link className="nav nav-link text-warning" to='/register'> Đăng ký </Link>
         </>
     )
 

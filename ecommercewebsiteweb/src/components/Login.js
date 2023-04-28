@@ -95,7 +95,7 @@ const Login = () => {
 
                         </div>
                         <div className='content'>
-                            <div className='welcome'>Xin chào !!!</div>
+                            <div className='welcome'>Đăng nhập</div>
                             
                             <div className='input-fields'>
                                 <input  value={username}  onChange={e => setUsername(e.target.value)} type='text' placeholder='Tên đăng nhập' className='input-line full-width'></input>
