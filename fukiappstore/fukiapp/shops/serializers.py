@@ -1,21 +1,46 @@
 from rest_framework import serializers
-from .models import User, Category, Shop, Product, Review, Comment
+from .models import User, Category, Shop, Product, Review, Comment, Notification
 from django.db.models import Avg
 from .paginators import ProductPaginator
+from django.contrib.auth.models import Group
 
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['id', 'name']
 class UserSerializer(serializers.ModelSerializer):
+    groups = GroupSerializer(many=True, read_only=True)
     def create(self, validated_data):
         data = validated_data.copy()
         u = User(**data)
         u.set_password(u.password)
+        if u.role == 'C':
+            u.is_verified = True
+        elif u.role == 'S':
+            u.is_verified = False
         u.save()
+
+        if u.role == 'C':
+            g = Group.objects.get(name='Customer')
+            u.groups.add(g)
+        elif u.role == 'S':
+            g = Group.objects.get(name='Seller')
+            u.groups.add(g)
+            notice = Notification(sender=u.id, content="Đăng kí trở thành nhà bán hàng - {}".format(u.username),
+                                  recipient=User.objects.filter(is_superuser=True).first())
+            notice.save()
         return u
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'avatar']
+        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'avatar', 'role', 'groups']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'role': {'write_only': True}
         }
+class ConfirmUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'role', 'is_verified']
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -121,3 +146,8 @@ class AuthorizedProductDetailSerializer(ProductDetailSerializer):
     class Meta:
         model = ProductDetailSerializer.Meta.model
         fields = ProductDetailSerializer.Meta.fields + ['auth_review']
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'

@@ -2,16 +2,17 @@ from rest_framework import viewsets, generics, parsers, permissions, status
 from rest_framework.decorators import action
 from rest_framework.views import Response
 from rest_framework.filters import OrderingFilter
-from .models import User, Category, Shop, Product, Comment, Review
+from .models import User, Category, Shop, Product, Comment, Review, Notification
 from .serializers import (
-    UserSerializer, CategorySerializer,
+    UserSerializer, ConfirmUserSerializer,
+    CategorySerializer,
     ShopSerializer, ShopDetailSerializer,
     ProductSerializer, CreateProductShopSerializer, ProductDetailSerializer, AuthorizedProductDetailSerializer,
     CommentSerializer, UpdateCommentSerializer,
-    ReviewSerializer
+    ReviewSerializer, NotificationSerializer
 )
 from .paginators import ProductPaginator
-from .permis import CommentOwner, ReviewOwner, IsSellerOrShopOwner
+from .permis import CommentOwner, ReviewOwner, IsSellerOrShopOwner, IsSuperAdminOrEmployee
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
 
@@ -23,8 +24,10 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     parser_classes = [parsers.MultiPartParser, ]
 
     def get_permissions(self):
-        if self.action in ['current_user']:
+        if self.action in ['current_user', 'change_password']:
             return [permissions.IsAuthenticated()]
+        elif self.action in ['confirm_register', 'confirm']:
+            return [IsSuperAdminOrEmployee()]
         return [permissions.AllowAny()]
 
     @action(methods=['get', 'put'], detail=False, url_path='current-user')
@@ -34,10 +37,42 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
             for k, v in request.data.items():
                 if k.__eq__('password'):
                     u.set_password(v)
-                setattr(u, k, v)
+                else:
+                    setattr(u, k, v)
             u.save()
         return Response(UserSerializer(u).data)
-
+    @action(methods=['post'], detail=False, url_path='change-password')
+    def change_password(self, request):
+        u = request.user
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        if u.check_password(old_password):
+            u.set_password(new_password)
+            u.save()
+            return Response({'message': 'Mật khẩu đã thay đổi thành công.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Mật khẩu cũ không đúng!!!'}, status=status.HTTP_400_BAD_REQUEST)
+    @action(methods=['get'], detail=False, url_path='notifications')
+    def notifications(self, request):
+        notifications = Notification.objects.filter(recipient=request.user.id)
+        return Response(NotificationSerializer(notifications, many=True).data)
+    @action(methods=['get'], detail=False, url_path='confirm-register')
+    def confirm_register(self, request):
+        u = User.objects.filter(role='S', is_verified=False)
+        return Response(ConfirmUserSerializer(u, many=True).data)
+    @action(methods=['patch'], detail=True, url_path='confirm')
+    def confirm(self, request, pk):
+        # u = request.user
+        u = User.objects.get(pk=pk)
+        if u.is_verified is False:
+            u.is_verified = True
+        else:
+            return Response({'error': 'Tài khoản này đã xác nhận.'}, status=status.HTTP_400_BAD_REQUEST)
+        u.save()
+        notice = Notification(sender=request.user.id, content="Đã xác nhận tài khoản {} thành công.".format(u.username),
+                              recipient=User.objects.filter(pk=pk).first())
+        notice.save()
+        return Response(ConfirmUserSerializer(u).data)
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()
@@ -78,6 +113,8 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView
         # kw = self.request.query_params.get('kw')
         # if kw:
         #     products = products.filter(name__icontains=kw)
+        if request.method.__eq__('GET'):
+            return Response(ShopDetailSerializer(s).data)
 
         if request.method.__eq__('POST'):
             try:
@@ -92,13 +129,12 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView
                     shop=s,
                 )
                 p.save()
-                return Response(CreateProductShopSerializer(p).data, status=status.HTTP_201_CREATED)
             except IntegrityError:
                 return Response({'error': 'Sản phẩm đã tồn tại trong cửa hàng.'}, status=status.HTTP_400_BAD_REQUEST)
             except ValidationError as e:
                 return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+            return Response(CreateProductShopSerializer(p).data, status=status.HTTP_201_CREATED)
 
-        return Response(ShopDetailSerializer(s).data)
         # return Response(ProductSerializer(products, many=True).data)
 
 
@@ -154,6 +190,36 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
             q = q.filter(price__lte=max_p)
 
         return q
+    @action(methods=['get'], detail=False, url_path='compare-product')
+    def compare_product(self, request):
+        products = self.queryset
+        # cate_id = self.request.query_params.get('category_id')
+        product1_id = self.request.query_params.get('product1')
+        product2_id = self.request.query_params.get('product2')
+
+        # if cate_id:
+        #     products = products.filter(category_id=cate_id)
+
+        if product1_id:
+            product1 = products.filter(id=product1_id).first()
+        else:
+            return Response({'error': 'Vui lòng chọn sản phẩm để so sánh!'})
+
+        if product2_id:
+            product2 = products.filter(id=product2_id).first()
+        else:
+            return Response({'product1': ProductDetailSerializer(product1).data,
+                             'error': 'Vui lòng chọn sản phẩm thứ 2 để so sánh!'})
+
+        if product1.category.id != product2.category.id:
+            return Response({'product1': ProductDetailSerializer(product1).data,
+                             'error': 'Sản phẩm thứ 2 phải cùng loại! Vui lòng chọn sản phẩm khác!'})
+        else:
+            data = {
+                'product1': ProductDetailSerializer(product1).data,
+                'product2': ProductDetailSerializer(product2).data
+            }
+            return Response(data)
 
     @action(methods=['post', 'get'], detail=True, url_path='comments')
     def comments(self, request, pk):

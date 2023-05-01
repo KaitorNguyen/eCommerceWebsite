@@ -14,6 +14,8 @@ class BaseModel(models.Model):
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='users/%Y/%m/', null=True)
+    role = models.CharField(choices=[('S', 'Seller'), ('C', 'Customer'), ('E', 'Employee')], max_length=1, default='C', null=True)
+    is_verified = models.BooleanField(default=False)
 
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -62,4 +64,11 @@ class Comment(ActionBase):
         return self.content
 
 
+class Notification(models.Model):
+    sender = models.IntegerField()
+    content = models.CharField(max_length=255)
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_date = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.content
 
