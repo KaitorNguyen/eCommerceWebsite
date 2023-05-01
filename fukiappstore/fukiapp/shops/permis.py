@@ -11,7 +11,7 @@ class ReviewOwner(permissions.IsAuthenticated):
 
 class IsSellerOrShopOwner(permissions.IsAuthenticated):
     def has_permission(self, request, view):
-        return request.user.groups.filter(name='Seller').exists()
+        return request.user.groups.filter(name='Seller').exists() and request.user.is_verified is True
     def has_object_permission(self, request, view, shop):
         return request.user and request.user == shop.user
 

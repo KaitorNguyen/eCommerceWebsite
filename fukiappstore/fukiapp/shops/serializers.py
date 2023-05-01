@@ -27,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
             g = Group.objects.get(name='Seller')
             u.groups.add(g)
             notice = Notification(sender=u.id, content="Đăng kí trở thành nhà bán hàng - {}".format(u.username),
-                                  recipient=User.objects.filter(is_superuser=True).first())
+                                  recipient=User.objects.filter(is_staff=True).first())
             notice.save()
         return u
     class Meta:
