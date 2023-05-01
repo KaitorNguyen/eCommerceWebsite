@@ -17,4 +17,5 @@ class IsSellerOrShopOwner(permissions.IsAuthenticated):
 
 class IsSuperAdminOrEmployee(permissions.IsAuthenticated):
     def has_permission(self, request, view):
-        return request.user.is_superuser is True or (request.user.is_staff is True and request.user.objects.filter(role='E').exists())
+        return request.user.is_staff is True
+        # return request.user.is_superuser is True or (request.user.is_staff is True and request.user.objects.filter(role='E').exists())

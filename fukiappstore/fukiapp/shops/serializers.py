@@ -26,9 +26,11 @@ class UserSerializer(serializers.ModelSerializer):
         elif u.role == 'S':
             g = Group.objects.get(name='Seller')
             u.groups.add(g)
-            notice = Notification(sender=u.id, content="Đăng kí trở thành nhà bán hàng - {}".format(u.username),
-                                  recipient=User.objects.filter(is_staff=True).first())
-            notice.save()
+            recipients = User.objects.filter(is_staff=True).all()
+            for recipient in recipients:
+                notice = Notification(sender=u.id, content="Đăng kí trở thành nhà bán hàng - {}".format(u.username),
+                                      recipient=recipient)
+                notice.save()
         return u
     class Meta:
         model = User
