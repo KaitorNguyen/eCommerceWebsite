@@ -236,7 +236,13 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
         p = self.get_object()
         reviews = p.review_set.filter(active=True)
         if request.method.__eq__('POST'):
-            r = Review(rate=request.data['rate'], content=request.data['content'], product=p, user=request.user)
+            r, _ = Review.objects.get_or_create(product=p, user=request.user)
+
+            rating = request.data['rate']
+            if int(rating) < 0 or int(rating) > 5:
+                return Response({'error': 'Giá trị rate phải nằm trong khoảng từ 0 đến 5'}, status=status.HTTP_400_BAD_REQUEST)
+            r.rate = rating
+            r.content = request.data['content']
             r.save()
             return Response(ReviewSerializer(r).data, status=status.HTTP_201_CREATED)
         return Response(ReviewSerializer(reviews, many=True).data)
@@ -267,11 +273,11 @@ class CommentViewSet(viewsets.ViewSet, generics.UpdateAPIView, generics.DestroyA
         return Response(CommentSerializer(c).data, status=status.HTTP_201_CREATED)
 
 
-class ReviewViewSet(viewsets.ViewSet, generics.UpdateAPIView, generics.DestroyAPIView):
+class ReviewViewSet(viewsets.ViewSet, generics.DestroyAPIView):
     queryset = Review.objects.filter(active=True)
     serializer_class = ReviewSerializer
 
     def get_permissions(self):
-        if self.action in ['update', 'partial_update', 'destroy']:
+        if self.action in ['destroy']:
             return [ReviewOwner()]
         return [permissions.AllowAny()]

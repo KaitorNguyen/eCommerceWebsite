@@ -79,6 +79,9 @@ class ShopDetailSerializer(ShopSerializer):
             data = validated_data.copy()
             data['user_id'] = requests.user.id
             s = Shop(**data)
+            if not s.avatar:
+                s.avatar = "/fukimedia/default/local-store_kj6ybp.png"
+            s.active = True
             s.save()
             return s
     class Meta:
@@ -88,8 +91,8 @@ class ShopDetailSerializer(ShopSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     def validate_rate(self, rate):
-        if rate < 1 or rate > 5:
-            raise serializers.ValidationError('Giá trị rate phải nằm trong khoảng từ 1 đến 5')
+        if rate < 0 or rate > 5:
+            raise serializers.ValidationError('Giá trị rate phải nằm trong khoảng từ 0 đến 5')
         return rate
     class Meta:
         model = Review

@@ -11,11 +11,11 @@ class ReviewOwner(permissions.IsAuthenticated):
 
 class IsSellerOrShopOwner(permissions.IsAuthenticated):
     def has_permission(self, request, view):
-        return request.user.groups.filter(name='Seller').exists() and request.user.is_verified is True
+        return request.user.groups.filter(name='Seller').exists() and request.user.is_verified is True or request.user.is_staff is True
     def has_object_permission(self, request, view, shop):
         return request.user and request.user == shop.user
 
 class IsSuperAdminOrEmployee(permissions.IsAuthenticated):
     def has_permission(self, request, view):
-        return request.user.is_staff is True
-        # return request.user.is_superuser is True or (request.user.is_staff is True and request.user.objects.filter(role='E').exists())
+        # return request.user.is_staff is True
+        return request.user.is_staff is True or User.objects.filter(pk=request.user.id, role='E').exists()
