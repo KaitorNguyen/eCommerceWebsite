@@ -43,6 +43,7 @@
 	padding: 40px 0;
 	background-color: #ffffff;
 	color: #4b4c4d;
+	margin-top: 100px;
 }
 
 .footer-basic ul {
@@ -390,8 +391,8 @@ div.multi-button {
 }
 
 button.prevNext {
-	width: 50px;
-	height: 50px;
+	width: 65px;
+	height: 65px;
 	color: gray;
 	background: #efefef;
 	border-radius: 100%;
@@ -1403,7 +1404,7 @@ button:focus {
   background: linear-gradient(#8CA6DB, #B993D6);
   opacity: 0.85;
   filter: alpha(opacity=85);
-  height: 560px;
+  height: 640px;
   position: absolute;
   width: 360px;
   z-index: 1;
@@ -1442,4 +1443,162 @@ button:focus {
 	margin-left: 480px !important;
 }
 
+.price_filter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 2px;
+	width: 60%;
+	position: absolute;
+	right: 10%;
+	
+	
+}
+/* CSS CỦA FILTER PRICE */
 
+*:focus {
+	outline: none;
+  }
+
+  
+  
+.input-group {
+	display: block;
+	width: 5000px;
+	height: 82px;
+	border: 0;
+	background-color: #ffffff;
+	border-bottom-left-radius: 41px;
+	border-bottom-right-radius: 41px;
+	border-top-left-radius: 41px;
+	border-top-right-radius: 0;
+	box-shadow: 0 17px 40px 0 rgba(75, 128, 182, 0.07);
+	margin-bottom: 22px;
+	position: relative;
+	font-size: 17px;
+	color: #a7b4c1;
+	transition: opacity 0.2s ease-in-out, filter 0.2s ease-in-out,
+	  box-shadow 0.1s ease-in-out;
+  }
+  
+  .input-group:hover {
+	box-shadow: 0 14px 44px 0 rgba(0, 0, 0, 0.077);
+  }
+  
+  .input-group input {
+	
+	position: absolute;
+	border: 0;
+	box-shadow: none;
+	background-color: rgba(255, 255, 255, 0);
+	top: 0;
+	height: 65px;
+	width: 100%;
+	padding: 0 53px;
+	box-sizing: border-box;
+	z-index: 3;
+	display: block;
+	color: #1a6fc4;
+	font-size: 17px;
+	font-family: "Oxygen", sans-serif;
+	transition: top 0.1s ease-in-out;
+  }
+
+.button_price_filter{
+	display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+}
+.button_filter{
+	width: 200px;
+	height: 60px;
+}
+/* CSS CỦA COMMENTS */
+
+.card_comment {
+    
+    border: none;
+    box-shadow: 5px 6px 6px 2px #e9ecef;
+    border-radius: 4px;
+}
+
+
+.dots{
+
+    height: 4px;
+  width: 4px;
+  margin-bottom: 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.badge{
+
+        padding: 7px;
+        padding-right: 9px;
+    padding-left: 16px;
+    box-shadow: 5px 6px 6px 2px #e9ecef;
+}
+
+.user-img{
+
+    margin-top: 4px;
+}
+
+.check-icon{
+
+    font-size: 17px;
+    color: #c3bfbf;
+    top: 1px;
+    position: relative;
+    margin-left: 3px;
+}
+
+.form-check-input{
+    margin-top: 6px;
+    margin-left: -24px !important;
+    cursor: pointer;
+}
+
+
+.form-check-input:focus{
+    box-shadow: none;
+}
+
+
+.icons i{
+
+    margin-left: 8px;
+}
+.reply{
+
+    margin-left: 12px;
+}
+
+.reply small{
+
+    color: #b7b4b4;
+
+}
+
+
+.reply small:hover{
+
+    color: green;
+    cursor: pointer;
+
+}
+
+.comment-input{
+	height: 100px;
+	background-color:#4b4c4d;
+	width: 99%;
+	border: none;
+    box-shadow: 5px 6px 6px 2px #e9ecef;
+    border-radius: 4px;
+	
+}
+.comment_tittle{
+	margin-bottom: 20px;
+}

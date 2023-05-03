@@ -8,7 +8,8 @@ export const endpoints = {
     "shops":(shopsId) => `/shops/${shopsId}/products/`,
     "login":"/o/token/",
     "current-user":"/users/current-user/",
-    "register":"/users/"
+    "register":"/users/",
+    "comments":(productsId) => `/products/${productsId}/comments`
 
 }
 

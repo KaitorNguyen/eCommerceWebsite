@@ -2,10 +2,13 @@ import { useEffect, useState } from "react"
 import Spinner from "./Spinner"
 import API, { endpoints } from "../configs/API"
 import { Link, useParams } from "react-router-dom"
+import { Button, Col, Image, Row } from "react-bootstrap"
+import Moment from "react-moment"
 
 const ProductsDetails = () => {
     const [productDetails, setProductDetails] = useState(null)
     const { productsId } = useParams()
+    const [comments, SetComments] = useState(null)
 
     useEffect(() => {
         const loadProductDetail = async () => {
@@ -16,6 +19,17 @@ const ProductsDetails = () => {
 
 
     }, [productsId])
+
+
+    useEffect(() => {
+        const loadComments = async () => {
+            let res = await API.get(endpoints['comments'](productsId))
+            SetComments(res.data)
+        }
+        loadComments()
+    }, [])
+
+
 
     if (productDetails === null)
         return <Spinner />
@@ -74,7 +88,45 @@ const ProductsDetails = () => {
                     </div>
                 </div>
             </section>
+            <hr></hr>
+            <div class="card_comment p-3">
+                        <div>
+                            {/* <img src={comments.user.image}/>  */}
+                            <div className="comment_tittle">Bình luận</div>                       
+                            <input className="comment-input" type="text" placeholder="  nhập nội dung bình luận"/> 
+                            <Button variant="secondary" className="mt-1">Bình luận</Button>                      
+                        </div>                     
+                    </div>
+
+            <hr></hr>
+
+            {comments === null ? <Spinner /> : (
+                comments.map(c => (
+                    <div class="card_comment p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="user d-flex flex-row align-items-center">
+                                <img src={c.user.image} alt={c.user.username} width="30" class="user-img rounded-circle mr-2"/>
+                                    <span><small class="font-weight-bold text-primary">{c.user.username}</small> <small class="font-weight-bold">{c.content}</small></span>
+                            </div>
+                            <small><Moment fromNow>{c.created_date}</Moment></small>
+                        </div>
+                       
+                    </div>
+                ))
+            )}
+
+
         </div>
     )
 }
 export default ProductsDetails
+
+{/* <Row>
+                        <Col xs={3} md={1}>
+                            <Image src={c.user.image} alt={c.user.username} rounded />
+                        </Col>
+                        <Col xs={9} md={11}>
+                            <p>{c.content}</p>
+                            <small>Được bình luận bởi {c.user.username} vào {c.created_date}</small>
+                        </Col>
+                    </Row> */}

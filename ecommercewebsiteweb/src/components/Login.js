@@ -5,6 +5,7 @@ import cookie from "react-cookies"
 import { useContext } from "react"
 import { MyUserContext } from "../configs/MyContext"
 import { Navigate } from "react-router-dom"
+import ErrorAlert from "../layouts/ErrorAlert"
 
 
 
@@ -24,8 +25,8 @@ const Login = () => {
                 let res = await API.post(endpoints['login'], {
                     "username": username,
                     "password": password,
-                    "client_id": "EYOSgsLsHyfqNgxnR6lNJWcdQlNB1Ub5F36SSXVo",
-                    "client_secret": "dvYWxEYpJvoQ77bJrISUwGc3Rej9wYbdwtLTH6dl15kw40bzWULB2RaQsDHVlSvTVS2sUjWkdlkc2GbnpmZirvJalqLhyuekbSBe2pwjy3aF251bM9ZUpKl28WXORpj4",
+                    "client_id": "JLcIf3g6UAlrjbjGPrcoRiFD4sE3lYcGCGcbC4YM",
+                    "client_secret": "cpwZdbxlNaXJNqvL7YqBZheWO3jFGfqVSolL69miVuIV0G9LhoLsRxwjzjIEuah4YsUGXbWg7egHxTLy5vEKiSZn6v0ntHX8CWurWR2qFmdam4gsQ8DnYCpamCvYZToZ",
                     "grant_type": "password"
     
                 })
@@ -41,7 +42,7 @@ const Login = () => {
                 })
             }catch(ex){
                 console.error(ex)
-                setErr('Tài khoảng hoặc mật khẩu không hợp lệ!')
+                setErr('Tài khoản hoặc mật khẩu không hợp lệ!')
             }finally{
                 setLoading(false)
             }
@@ -84,7 +85,7 @@ const Login = () => {
                 </Button>}
 
             </Form> */}
-            {err?<div className="alert alert-danger">{err}</div>:""}
+            {err?<ErrorAlert err={err} />:""}
             
             <Form onSubmit={login}>
             <div className="login_center">
