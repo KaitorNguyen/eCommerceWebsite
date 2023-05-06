@@ -13,7 +13,7 @@ const Login = () => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
-    const [err,setErr] = useState()
+    const [err, setErr] = useState()
     const [user, dispatch] = useContext(MyUserContext)
 
     const login = (evt) => {
@@ -21,52 +21,52 @@ const Login = () => {
 
         const process = async () => {
 
-            try{
+            try {
                 let res = await API.post(endpoints['login'], {
                     "username": username,
                     "password": password,
                     "client_id": "JLcIf3g6UAlrjbjGPrcoRiFD4sE3lYcGCGcbC4YM",
                     "client_secret": "cpwZdbxlNaXJNqvL7YqBZheWO3jFGfqVSolL69miVuIV0G9LhoLsRxwjzjIEuah4YsUGXbWg7egHxTLy5vEKiSZn6v0ntHX8CWurWR2qFmdam4gsQ8DnYCpamCvYZToZ",
                     "grant_type": "password"
-    
+
                 })
-    
+
                 cookie.save('access-token', res.data.access_token)
-    
+
                 let user = await authAPI().get(endpoints['current-user'])
                 cookie.save('current-user', user.data)
-    
+
                 dispatch({
                     "type": "login",
                     "payload": user.data
                 })
-            }catch(ex){
+            } catch (ex) {
                 console.error(ex)
                 setErr('Tài khoản hoặc mật khẩu không hợp lệ!')
-            }finally{
+            } finally {
                 setLoading(false)
             }
-           
+
 
             setLoading(false)
         }
 
-        if (username === ""){
+        if (username === "") {
             setErr("Bạn phải nhập tài khoản!")
         }
-        else if(password === ""){
+        else if (password === "") {
             setErr("Bạn phải nhập mật khẩu!")
         }
-        else{
+        else {
             setLoading(true)
             process()
         }
-   
+
     }
     if (user !== null)
-    return <Navigate to="/" />
+        return <Navigate to="/" />
 
-    
+
     return (
         <>
             {/* <div className="text-center text-success">Đăng nhập người dùng</div>
@@ -85,28 +85,28 @@ const Login = () => {
                 </Button>}
 
             </Form> */}
-            {err?<ErrorAlert err={err} />:""}
-            
+            {err ? <ErrorAlert err={err} /> : ""}
+
             <Form onSubmit={login}>
-            <div className="login_center">
-                <div className='bold-line'>
-                </div>
+                <div className="login_center">
+                    <div className='bold-line'>
+                    </div>
                     <div className='window'>
                         <div className='overlay'>
 
                         </div>
                         <div className='content'>
                             <div className='welcome'>Đăng nhập</div>
-                            
+
                             <div className='input-fields'>
-                                <input  value={username}  onChange={e => setUsername(e.target.value)} type='text' placeholder='Tên đăng nhập' className='input-line full-width'></input>
-                                <input  value={password} onChange={e => setPassword(e.target.value)} type='password' placeholder='Mật khẩu' className='input-line full-width'></input>
+                                <input value={username} onChange={e => setUsername(e.target.value)} type='text' placeholder='Tên đăng nhập' className='input-line full-width'></input>
+                                <input value={password} onChange={e => setPassword(e.target.value)} type='password' placeholder='Mật khẩu' className='input-line full-width'></input>
 
                             </div>
-                            {loading ? <Spinner/>: <button  type="submit" className="ghost-round full-width">Đăng nhập </button>}
+                            {loading ? <Spinner /> : <button type="submit" className="ghost-round full-width">Đăng nhập </button>}
                         </div>
                     </div>
-            </div>
+                </div>
             </Form>
         </>
     )

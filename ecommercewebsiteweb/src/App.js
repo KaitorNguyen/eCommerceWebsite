@@ -13,12 +13,17 @@ import { useReducer } from 'react';
 import MyUserReducer from './reducers/MyUserReducer';
 import cookie from "react-cookies";
 import Register from './components/Register';
+import moment from 'moment';
+import 'moment/locale/vi';
+import Purchase from './components/Purchase';
+import AddShop from './components/AddShop';
+moment().local("vi")
 
 function App() {
-  const [user, dispatch] = useReducer(MyUserReducer,cookie.load('current-user') || null )
+  const [user, dispatch] = useReducer(MyUserReducer, cookie.load('current-user') || null)
 
   return (
-    <MyUserContext.Provider value={[user,dispatch]}>
+    <MyUserContext.Provider value={[user, dispatch]}>
       <BrowserRouter>
         <Header />
         <Container>
@@ -29,6 +34,8 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
             <Route path='/shops/:shopsId/products' element={<Shops />} />
+            <Route path='/products/:productsId/purchase' element={<Purchase />} />
+            <Route path='/shops' element={<AddShop />}/>
           </Routes>
         </Container>
         <Footer />

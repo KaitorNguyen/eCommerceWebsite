@@ -42,7 +42,7 @@ const Register = () => {
             if (res.status === 201)
                nav("/login")
             else
-               setErr("Đăng ký thất bại, vui lòng quay lại sua")
+               setErr("Đăng ký thất bại, vui lòng quay lại sau")
          } catch (ex) {
             let msg = ""
             for (let e in Object.values(ex.response.data))
