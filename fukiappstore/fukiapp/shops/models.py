@@ -33,6 +33,7 @@ class Shop(BaseModel):
         return self.name
 
 class Product(BaseModel):
+    objects = None
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='products/%Y/%m/', null=True, blank=True)
     description = RichTextField(null=True)

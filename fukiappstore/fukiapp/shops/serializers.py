@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import User, Category, Shop, Product, Review, Comment, Notification
 from django.db.models import Avg
-from .paginators import ProductPaginator
 from django.contrib.auth.models import Group
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -14,6 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
         data = validated_data.copy()
         u = User(**data)
         u.set_password(u.password)
+        if not u.avatar:
+            u.avatar = "/fukimedia/default/avatar_default_pgdx3q.jpg"
         if u.role == 'C':
             u.is_verified = True
         elif u.role == 'S':
@@ -36,8 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'avatar', 'role', 'groups']
         extra_kwargs = {
-            'password': {'write_only': True},
-            'role': {'write_only': True}
+            'password': {'write_only': True}
         }
 class ConfirmUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -73,17 +73,6 @@ class ShopDetailSerializer(ShopSerializer):
     def get_product_count(self, obj):
         return Product.objects.filter(shop=obj).count()
 
-    def create(self, validated_data):
-        requests = self.context.get('request')
-        if requests:
-            data = validated_data.copy()
-            data['user_id'] = requests.user.id
-            s = Shop(**data)
-            if not s.avatar:
-                s.avatar = "/fukimedia/default/local-store_kj6ybp.png"
-            s.active = True
-            s.save()
-            return s
     class Meta:
         model = ShopSerializer.Meta.model
         fields = ShopSerializer.Meta.fields + ['description', 'created_date', 'active', 'user', 'product_count', 'proshop']

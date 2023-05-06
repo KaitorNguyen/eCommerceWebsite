@@ -28,6 +28,8 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
             return [permissions.IsAuthenticated()]
         elif self.action in ['confirm_register', 'confirm']:
             return [IsSuperAdminOrEmployee()]
+        elif self.action in ['create_shop']:
+            return [IsSellerOrShopOwner()]
         return [permissions.AllowAny()]
 
     @action(methods=['get', 'put'], detail=False, url_path='current-user')
@@ -74,12 +76,35 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
         notice.save()
         return Response(ConfirmUserSerializer(u).data)
 
+    @action(methods=['post'], detail=False, url_path='create-shop')
+    def create_shop(self, request):
+        name = request.data['name']
+        avatar = request.data['avatar']
+        if not avatar:
+            avatar = "/fukimedia/default/local-store_kj6ybp.png"
+        if name:
+            try:
+                s = Shop(
+                    name=name,
+                    description=request.data['description'],
+                    avatar=avatar,
+                    user=request.user
+                )
+                s.save()
+            except IntegrityError:
+                error_msg = 'Tên cửa hàng đã tồn tại !!!'
+            else:
+                return Response(ShopDetailSerializer(s).data, status=status.HTTP_201_CREATED)
+        else:
+            error_msg = 'Bạn cần phải nhập tên cửa hàng !!!'
+        return Response({'error': error_msg}, status=status.HTTP_400_BAD_REQUEST)
+
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
+class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
     queryset = Shop.objects.all()
     serializer_class = ShopDetailSerializer
 
@@ -89,7 +114,7 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView
         return self.serializer_class
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy'] or (self.action in ['products'] and self.request.method == 'POST'):
+        if self.action in ['update', 'partial_update', 'destroy'] or (self.action in ['products'] and self.request.method == 'POST'):
             return [IsSellerOrShopOwner()]
         return [permissions.AllowAny()]
 
