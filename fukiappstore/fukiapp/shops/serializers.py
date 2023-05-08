@@ -73,6 +73,19 @@ class ShopDetailSerializer(ShopSerializer):
     def get_product_count(self, obj):
         return Product.objects.filter(shop=obj).count()
 
+
+    def create(self, validated_data):
+        requests = self.context.get('request')
+        if requests:
+            data = validated_data.copy()
+            data['user_id'] = requests.user.id
+            s = Shop(**data)
+            if not s.avatar:
+                s.avatar = "/fukimedia/default/local-store_kj6ybp.png"
+            s.active = True
+            s.save()
+            return s
+
     class Meta:
         model = ShopSerializer.Meta.model
         fields = ShopSerializer.Meta.fields + ['description', 'created_date', 'active', 'user', 'product_count', 'proshop']

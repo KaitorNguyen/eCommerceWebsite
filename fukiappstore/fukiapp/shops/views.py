@@ -15,6 +15,7 @@ from .paginators import ProductPaginator
 from .permis import CommentOwner, ReviewOwner, IsSellerOrShopOwner, IsSuperAdminOrEmployee
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
+import orders
 
 
 # Create your views here.
@@ -99,12 +100,26 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
             error_msg = 'Bạn cần phải nhập tên cửa hàng !!!'
         return Response({'error': error_msg}, status=status.HTTP_400_BAD_REQUEST)
 
+    #Giỏ hàng
+    @action(methods=['get'], detail=False, url_path='cart')
+    def cart(self, request):
+        u = request.user
+        cart = orders.models.Cart.objects.filter(is_completed=False, user=u).first()
+        return Response(orders.serializers.CartSerializer(cart).data)
+
+    #Danh sách đơn hàng đã đặt
+    @action(methods=['get'], detail=False, url_path='orders')
+    def orders(self, request):
+        u = request.user
+        o = orders.models.Order.objects.filter(user=u)
+        return Response(orders.serializers.OrderBaseSerializer(o, many=True).data)
+
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
+class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
     queryset = Shop.objects.all()
     serializer_class = ShopDetailSerializer
 
@@ -114,7 +129,7 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.UpdateAPIView
         return self.serializer_class
 
     def get_permissions(self):
-        if self.action in ['update', 'partial_update', 'destroy'] or (self.action in ['products'] and self.request.method == 'POST'):
+        if self.action in ['create', 'update', 'partial_update', 'destroy'] or (self.action in ['products'] and self.request.method == 'POST'):
             return [IsSellerOrShopOwner()]
         return [permissions.AllowAny()]
 
