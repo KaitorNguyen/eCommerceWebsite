@@ -30,7 +30,7 @@ const Register = () => {
             form.append("first_name", user.firstName)
             form.append("last_name", user.lastName)
             form.append("username", user.username)
-            form.append("password ", user.password)
+            form.append("password", user.password)
             form.append("role", selectedRole)
             if (avatar.current.files.length > 0)
                form.append("avatar", avatar.current.files[0])
@@ -69,6 +69,7 @@ const Register = () => {
    }
    return (
       <>
+      
          {err ? <ErrorAlert err={err} /> : ""}
          <Form onSubmit={register}>
             <div className="login_center">
