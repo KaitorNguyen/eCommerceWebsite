@@ -1514,7 +1514,7 @@ button:focus {
 }
 
 .button_filter {
-	width: 200px;
+	width: 120px;
 	height: 60px;
 }
 
@@ -1667,4 +1667,8 @@ button:focus {
 .button-like{
 	position: absolute;
 	margin-top: 10px;
+}
+
+.rating{
+	margin-left: 200px;
 }

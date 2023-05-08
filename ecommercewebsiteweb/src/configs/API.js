@@ -10,7 +10,8 @@ export const endpoints = {
     "current-user": "/users/current-user/",
     "register": "/users/",
     "comments": (productsId) => `/products/${productsId}/comments/`,
-    "addShops": "/shops/"
+    "addShops": "/shops/",
+    "reviews" :(productsId) => `/products/${productsId}/reviews/`
 
 }
 

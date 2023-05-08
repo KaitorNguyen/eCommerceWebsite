@@ -6,14 +6,19 @@ import Moment from "react-moment"
 import { Button, Form } from "react-bootstrap"
 import { useContext } from "react"
 import { MyUserContext } from "../configs/MyContext"
+import Rating from "react-rating"
+import Products from "./Products"
 
 const ProductsDetails = () => {
     const [productDetails, setProductDetails] = useState(null)
     const { productsId } = useParams()
     const [comments, SetComments] = useState(null)
     const [loading, setLoading] = useState(false)
-    const [content, SetContent] = useState("")
+    const [contentComment, SetContentComment] = useState("")
+    const [contentReview, SetContentReview] = useState("")
     const [user,] = useContext(MyUserContext)
+    const [reviews, SetReviews] = useState(null)
+    const [rate, SetRate] = useState(0)
 
     useEffect(() => {
         const loadProductDetail = async () => {
@@ -35,25 +40,65 @@ const ProductsDetails = () => {
         loadComments()
     }, [productsId])
 
+    useEffect(() => {
+        const loadReviews = async () => {
+            let res = await API.get(endpoints['reviews'](productsId))
+            SetReviews(res.data)
+        }
+        loadReviews()
+    }, [productsId])
+
+    const addReview = (evt) => {
+        evt.preventDefault()
+
+        const process = async () => {
+            try {
+                let res = await authAPI().post(endpoints['reviews'](productsId), {
+                    "content": contentReview,
+                    "rate": rate
+                })
+                SetReviews(current => ([res.data, ...current]))
+            } catch {
+
+            } finally {
+                SetContentReview("")
+                SetRate()
+                setLoading(false)
+            }
+        }
+        setLoading(true)
+        process()
+    }
+
+
     const addComment = (evt) => {
         evt.preventDefault()
 
         const process = async () => {
             try {
                 let res = await authAPI().post(endpoints['comments'](productsId), {
-                    "content": content
+                    "content": contentComment
                 })
                 SetComments(current => ([res.data, ...current]))
             } catch {
 
             } finally {
-                SetContent("")
+                SetContentComment("")
                 setLoading(false)
             }
 
         }
         setLoading(true)
         process()
+
+    }
+
+
+   
+
+    const rating= (value) =>{
+        alert(value)
+        SetRate(value)
 
     }
 
@@ -93,9 +138,10 @@ const ProductsDetails = () => {
                                     </div>
                                     <div className="_p-features" dangerouslySetInnerHTML={{ __html: productDetails.description }}>
                                     </div>
-                                    <div className="button-like"><button className="btn btn-outline-danger" type="submit" style={{fontSize:"16px"}}>♥</button> </div>
+
                                     <Link to={`/products/${productsId}/purchase`}>   <button className="button-89" >Mua ngay</button></Link>
                                     <Link to={homePageUrl}>   <button className="button-89" >Thêm vào giỏ</button></Link>
+
                                 </div>
                             </div>
                         </div>
@@ -109,7 +155,7 @@ const ProductsDetails = () => {
                     <div>
                         {/* <img src={comments.user.image}/>  */}
                         <div className="comment_tittle">Bình luận</div>
-                        <input className="comment-input" type="text" value={content} onChange={e => SetContent(e.target.value)} placeholder="  nhập nội dung bình luận" />
+                        <input className="comment-input" type="text" value={contentComment} onChange={e => SetContentComment(e.target.value)} placeholder="  nhập nội dung bình luận" />
                         {loading ? <Spinner /> : <button type="submit" className="comment-button"> Bình luận</button>}
                     </div>
 
@@ -132,7 +178,53 @@ const ProductsDetails = () => {
                     </div>
                 ))
             )}
+            <hr></hr>
+            {user === null ? <Link className="login-comment" to="/login">Đăng nhập để đánh giá sản phẩm</Link> : (<Form onSubmit={addReview}>
+                <div className="card_comment p-3">
 
+                    <div>
+                        {/* <img src={comments.user.image}/>  */}
+                        <div className="comment_tittle">Đánh giá sản phẩm</div>
+                        <div>
+                            <Rating emptySymbol="fa fa-star-o fa-2x"
+                                fullSymbol="fa fa-star fa-2x"
+                                initialRating={rate}
+                                onChange={rating}
+                                
+                                
+                                
+                                 />
+                        </div>
+                        <input className="comment-input" type="text" value={contentReview} onChange={e => SetContentReview(e.target.value)} placeholder="  nhập nội dung review " />
+                        {loading ? <Spinner /> : <button type="submit" className="comment-button"> Đánh giá</button>}
+                    </div>
+
+                </div>
+            </Form>)}
+            <hr></hr>
+            {/* Review */}
+            {reviews === null ? <Spinner /> : (
+                reviews.map(c => (
+                    <div className="card_comment p-3">
+                        <div className="d-flex justify-content-between align-items-center">
+                            <div className="user d-flex flex-row align-items-center">
+                                <img src={c.user.image} alt={c.user.username} width="30" className="user-img rounded-circle mr-2" />
+                                <span><small className="font-weight-bold text-primary">{c.user.username}</small> <small className="font-weight-bold">{c.content}</small></span>
+                            </div>
+                            <small><Moment fromNow>{c.created_date}</Moment></small>
+                            <div>
+                            <Rating emptySymbol="fa fa-star-o fa-2x"
+                                fullSymbol="fa fa-star fa-2x"
+                                initialRating={c.rate?c.rate:0}
+                                
+                                onClick={rating} />
+                        </div>
+
+                        </div>
+
+                    </div>
+                ))
+            )}
 
         </div>
     )

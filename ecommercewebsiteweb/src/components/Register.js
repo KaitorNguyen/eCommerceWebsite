@@ -19,6 +19,7 @@ const Register = () => {
    const [loading, setLoading] = useState(false)
    const [err, setErr] = useState("")
    const nav = useNavigate()
+   const [selectedRole, setSelectedRole] = useState("C")
 
    const register = (evt) => {
       evt.preventDefault()
@@ -30,7 +31,7 @@ const Register = () => {
             form.append("last_name", user.lastName)
             form.append("username", user.username)
             form.append("password ", user.password)
-            form.append("role", user.role)
+            form.append("role", selectedRole)
             if (avatar.current.files.length > 0)
                form.append("avatar", avatar.current.files[0])
 
@@ -86,9 +87,9 @@ const Register = () => {
                         <input onChange={e => setUser({ ...user, "username": e.target.value })} type='text' value={user.username} placeholder='Tên đăng nhập' className='input-line full-width'></input>
                         <input onChange={e => setUser({ ...user, "password": e.target.value })} type='password' value={user.password} placeholder='Mật khẩu' className='input-line full-width'></input>
                         <input onChange={e => setUser({ ...user, "confirmPassword": e.target.value })} type='password' value={user.confirmPassword} placeholder='Xác nhận mật khẩu' className='input-line full-width'></input>
-                        <select className='input-line full-width' >Bạn là
-                           <option value={user.role = "C"} selected>Khách hàng</option>
-                           <option value={user.role = "S"}>Nhà cung cấp</option>
+                        <select className='input-line full-width' value={selectedRole} onChange={(e)=>setSelectedRole(e.target.value)} >Bạn là
+                           <option  value="C"  selected>Khách hàng</option>
+                           <option value="S"> Nhà cung cấp</option>
                         </select>
                         <input ref={avatar} type='file' className='input-line full-width'></input>
                      </div>

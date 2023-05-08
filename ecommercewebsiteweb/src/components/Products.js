@@ -71,7 +71,7 @@ const Products = () => {
                         <div className="input-group">
                             <input value={maxPrice} onChange={(e) => SetMaxPrice(e.target.value)} type="number" />
                         </div>
-                        <Button className="button_filter" onClick={() => setPage(2)} variant="outline-primary">duyệt</Button>
+                        <Button className="button_filter" onClick={() => setPage(2)} variant="outline-primary">Lọc</Button>
                     </div>
                 </div>
                 <Row>
