@@ -47,14 +47,18 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     @action(methods=['post'], detail=False, url_path='change-password')
     def change_password(self, request):
         u = request.user
-        old_password = request.POST.get('old_password')
-        new_password = request.POST.get('new_password')
-        if u.check_password(old_password):
-            u.set_password(new_password)
-            u.save()
-            return Response({'message': 'Mật khẩu đã thay đổi thành công.'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'Mật khẩu cũ không đúng!!!'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            old_password = request.POST.get('old_password')
+            new_password = request.POST.get('new_password')
+            if u.check_password(old_password):
+                u.set_password(new_password)
+                u.save()
+                return Response({'message': 'Mật khẩu đã thay đổi thành công.'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Mật khẩu cũ không đúng!!!'}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
     @action(methods=['get'], detail=False, url_path='notifications')
     def notifications(self, request):
         notifications = Notification.objects.filter(recipient=request.user.id)
@@ -104,15 +108,21 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     @action(methods=['get'], detail=False, url_path='cart')
     def cart(self, request):
         u = request.user
-        cart = orders.models.Cart.objects.filter(is_completed=False, user=u).first()
-        return Response(orders.serializers.CartSerializer(cart).data)
+        try:
+            cart = orders.models.Cart.objects.filter(is_completed=False, user=u).first()
+            return Response(orders.serializers.CartSerializer(cart).data)
+        except:
+            return Response({'error': 'Bạn cần phải đăng nhập!!!'}, status=status.HTTP_400_BAD_REQUEST)
 
     #Danh sách đơn hàng đã đặt
     @action(methods=['get'], detail=False, url_path='orders')
     def orders(self, request):
         u = request.user
-        o = orders.models.Order.objects.filter(user=u)
-        return Response(orders.serializers.OrderBaseSerializer(o, many=True).data)
+        try:
+            o = orders.models.Order.objects.filter(user=u)
+            return Response(orders.serializers.OrderBaseSerializer(o, many=True).data)
+        except:
+            Response({'error': 'Bạn cần phải đăng nhập!!!'}, status=status.HTTP_400_BAD_REQUEST)
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()
