@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Button, Container, Form, Nav, NavDropdown, Navbar, Spinner } from "react-bootstrap"
+import { Button, Container, Dropdown, Form, Nav, NavDropdown, Navbar, Spinner } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
 import API, { endpoints } from "../configs/API"
 import { useContext } from "react"
@@ -18,9 +18,11 @@ const Header = () => {
         }
         loadCategories()
     }, [])
+
     let homePageUrl = `/`
     let aboutUs = `/aboutus`
-    let shop = `/shops`
+    let addShop = `/add-shop`
+    let listYourShop = `/users/shops`
 
     const search = (evt) => {
         evt.preventDefault()
@@ -44,10 +46,29 @@ const Header = () => {
     if (user !== null)
         userInfo = (
             <>
-                <Link className="nav nav-link text-danger" to={homePageUrl}>
+                {/* <Link className="nav nav-link text-danger" to={homePageUrl}>
+                            <img src={user.avatar} alt={user.username} width="40" className="rounded-circle" />
+                            Chào {user.username}  
+                </Link> */}
+                <Dropdown>
+                <Dropdown.Toggle variant="Secondary" id="dropdown-basic">
                     <img src={user.avatar} alt={user.username} width="40" className="rounded-circle" />
-                    Chào {user.username}  </Link>
-                <Button onClick={logout} className="btn btn-danger"> Đăng xuất </Button>
+                    Chào {user.username}  
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu variant="secondary">
+                    <Dropdown.Item href="#/action-1"> Thông tin cá nhân </Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">Đổi mật khẩu</Dropdown.Item>
+                    {user.groups[0].name === "Seller" || user.groups[0].name === "Employee" ? 
+                        <Dropdown.Item><Link className="nav nav-link" to={listYourShop}> Cửa hàng của bạn </Link></Dropdown.Item> : null}
+                    <Dropdown.Divider />
+                    <Dropdown.Item>
+                        <Button onClick={logout} className="btn btn-danger"> Đăng xuất </Button>
+                    </Dropdown.Item>
+                </Dropdown.Menu>
+                </Dropdown>
+
+                {/* <Button onClick={logout} className="btn btn-danger"> Đăng xuất </Button> */}
             </>
         )
 
@@ -62,7 +83,8 @@ const Header = () => {
                         <Nav className="me-auto">
                             <Link className="nav nav-link" to={homePageUrl}> Trang Chủ </Link>
                             <Link className="nav nav-link" to={aboutUs}> About Us </Link>
-                            {user === null?null:user.groups[0].name === "Seller"?  <Link className="nav nav-link" to={shop}> Tạo cửa hàng </Link>:null}
+                            {user === null ? null : user.groups[0].name === "Seller" || user.groups[0].name === "Employee" ? 
+                                <Link className="nav nav-link" to={addShop}> Tạo cửa hàng </Link> : null}
                             <NavDropdown title="Danh mục" id="basic-nav-dropdown">
                                 {categories.map(c => {
 

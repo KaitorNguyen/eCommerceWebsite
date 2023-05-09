@@ -1,33 +1,21 @@
 import { useState } from "react"
-import { useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import API, { authAPI, endpoints } from "../configs/API"
-import { Form, Spinner } from "react-bootstrap"
-import { useContext } from "react"
-import { MyUserContext } from "../configs/MyContext"
+import { Button, Form, Spinner } from "react-bootstrap"
 import ErrorAlert from "../layouts/ErrorAlert"
+import InputItem from "../layouts/InputItem"
+import cookie from "react-cookies"
 
 const AddShop = () => {
-    const [shop, SetShop] = useState({
+    const [shop, setShop] = useState({
         "name": "",
         "description": "",
-        "user": [{ "username": "", "password": "" }]
 
     })
-    const [user,] = useContext(MyUserContext)
     const [loading, setLoading] = useState(false)
     const [err, setErr] = useState("")
-    const [categories, SetCategories] = useState([])
     const nav = useNavigate()
 
-
-    useEffect(() => {
-        const loadCategories = async () => {
-            let res = await API.get(endpoints['categories'])
-            SetCategories(res.data)
-        }
-        loadCategories()
-    }, [])
     const addShop = (evt) => {
         evt.preventDefault()
 
@@ -36,79 +24,57 @@ const AddShop = () => {
                 let form = new FormData()
                 form.append("name", shop.name)
                 form.append("description", shop.description)
-                form.append("user[0][username]", shop.user[0].username)
-                form.append("user[0][password]", shop.user[0].password)
-        
-                let res = await authAPI.post(endpoints['addShops'], form, {
+    
+                let res = await authAPI().post(endpoints['addShops'], form, {
                     headers: {
+                        // "Authorization": `Bearer ${cookie.load("access-token")}`,
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                if (res && res.status === 201)
-                    nav("/login")
+                if (res.status === 201)
+                    nav("/users/shops")
                 else
-                    setErr("Tạo thất bại")
+                    setErr("Hệ thống đang có lỗi! Vui lòng quay lại sau!")
             } catch (ex) {
                 let msg = ""
-                for (let e in Object.values(ex.response.data))
-                    msg += `${e}`
-        
+                for (let e of Object.values(ex.response.data))
+                    msg += `${e} `
+
                 setErr(msg)
             } finally {
                 setLoading(false)
             }
         }
         
-        if (shop.name === "" || shop.description === "")
-            setErr("tên hoặc mô tả không được rỗng")
+        if (shop.name === "")
+            setErr("Tên cửa hàng không được phép để trống")
         else {
-           
             setLoading(true)
-            process()
-            
+            process() 
         }
-
     }
 
 
-
-
-
-
+    const setValue = e => {
+        const { name, value } = e.target
+        setShop(current => ({...current, [name]:value}))
+    }
 
     return (
 
         <>
-            
-            {err ? <ErrorAlert err={err} /> : ""}
-            {user !== null ? <Form onSubmit={addShop}>
-                <div className="login_center">
-                    <div className='bold-line'>
-                    </div>
-                    <div className='window'>
-                        <div className='overlay'>
-                        </div>
-                        <div className='content'>
-                            <div className='welcome'>Tạo cửa hàng cá nhân</div>
+            <h1 className="text-center text-success">TẠO CỬA HÀNG</h1>
 
-                            <div className='input-fields'>
-                                <input value={shop.name} onChange={e => SetShop({ ...shop, "name": e.target.value })} type='text' placeholder='Tên shop' className='input-line full-width'></input>
-                                <input value={shop.description} onChange={e => SetShop({ ...shop, "description": e.target.value })} type='password' placeholder='Mô tả ' className='input-line full-width'></input>
-                                <input value={shop.user[0].username} onChange={e => SetShop({ ...shop, "user": [{ ...shop.user[0], "username": e.target.value }] })} type='text' placeholder='Username' className='input-line full-width'></input>
-<input value={shop.user[0].password} onChange={e => SetShop({ ...shop, "user": [{ ...shop.user[0], "password": e.target.value }] })} type='password' placeholder='Password ' className='input-line full-width'></input>
-                            </div>
-                            <select className='input-line full-width' value={shop} onChange={(e) => SetShop(e.target.value)} >Bạn là
-                                {categories.map(c => {
-                                    return (
-                                        <option value={c.name} selected>{c.name}</option>
-                                    )
-                                })}
-                            </select>
-                            {loading ? <Spinner /> : <button type="submit" className="ghost-round full-width">Tạo </button>}
-                        </div>
-                    </div>
-                </div>
-            </Form> : <Link className="login-comment" to="/login">Đăng nhập để tạo</Link>}
+            {err?<ErrorAlert err={err} />:""}
+
+            <Form onSubmit={addShop}>
+                <InputItem label="Tên cửa hàng" type="text" value={shop.name} 
+                            name="name" setValue={setValue} />
+                <InputItem label="Mô tả cửa hàng" type="text" value={shop.description} 
+                            name="description" setValue={setValue} />
+            
+                {loading?<Spinner />:<Button variant="primary" type="submit">Tạo</Button>}
+            </Form>
         </>
     )
 }

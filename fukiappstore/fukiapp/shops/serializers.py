@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         u = User(**data)
         u.set_password(u.password)
         if not u.avatar:
-            u.avatar = "/fukimedia/default/avatar_default_pgdx3q.jpg"
+            u.avatar = "/default/avatar_default_pgdx3q.jpg"
         if u.role == 'C':
             u.is_verified = True
         elif u.role == 'S':
@@ -81,7 +81,7 @@ class ShopDetailSerializer(ShopSerializer):
             data['user_id'] = requests.user.id
             s = Shop(**data)
             if not s.avatar:
-                s.avatar = "/fukimedia/default/local-store_kj6ybp.png"
+                s.avatar = "/default/local-store_kj6ybp.png"
             s.active = True
             s.save()
             return s

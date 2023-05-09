@@ -17,6 +17,8 @@ import moment from 'moment';
 import 'moment/locale/vi';
 import Purchase from './components/Purchase';
 import AddShop from './components/AddShop';
+import ListYourShop from './components/ListYourShop';
+import AddProduct from './components/AddProduct';
 moment().local("vi")
 
 function App() {
@@ -35,7 +37,9 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/shops/:shopsId/products' element={<Shops />} />
             <Route path='/products/:productsId/purchase' element={<Purchase />} />
-            <Route path='/shops' element={<AddShop />}/>
+            <Route path='/add-shop' element={<AddShop />}/>
+            <Route path='/users/shops' element={<ListYourShop/>} />
+            <Route path='/shops/:shopsId/add-product' element={<AddProduct/>} />
           </Routes>
         </Container>
         <Footer />

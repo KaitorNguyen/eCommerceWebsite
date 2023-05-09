@@ -139,8 +139,10 @@ const ProductsDetails = () => {
                                     <div className="_p-features" dangerouslySetInnerHTML={{ __html: productDetails.description }}>
                                     </div>
 
-                                    <Link to={`/products/${productsId}/purchase`}>   <button className="button-89" >Mua ngay</button></Link>
-                                    <Link to={homePageUrl}>   <button className="button-89" >Thêm vào giỏ</button></Link>
+                                    <div className="mt-2">
+                                        <Link to={`/products/${productsId}/purchase`}>   <button className="button-89" >Mua ngay</button></Link>
+                                        <Link to={homePageUrl}>   <button className="button-89" >Thêm vào giỏ</button></Link>
+                                    </div>
 
                                 </div>
                             </div>
@@ -169,7 +171,7 @@ const ProductsDetails = () => {
                     <div className="card_comment p-3">
                         <div className="d-flex justify-content-between align-items-center">
                             <div className="user d-flex flex-row align-items-center">
-                                <img src={c.user.image} alt={c.user.username} width="30" className="user-img rounded-circle mr-2" />
+                                <img src={c.user.avatar} alt={c.user.username} width="30" className="user-img rounded-circle mr-2" />
                                 <span><small className="font-weight-bold text-primary">{c.user.username}</small> <small className="font-weight-bold">{c.content}</small></span>
                             </div>
                             <small><Moment fromNow>{c.created_date}</Moment></small>
@@ -189,11 +191,8 @@ const ProductsDetails = () => {
                             <Rating emptySymbol="fa fa-star-o fa-2x"
                                 fullSymbol="fa fa-star fa-2x"
                                 initialRating={rate}
-                                onChange={rating}
-                                
-                                
-                                
-                                 />
+                                onChange={rating} 
+                            />
                         </div>
                         <input className="comment-input" type="text" value={contentReview} onChange={e => SetContentReview(e.target.value)} placeholder="  nhập nội dung review " />
                         {loading ? <Spinner /> : <button type="submit" className="comment-button"> Đánh giá</button>}
@@ -208,17 +207,18 @@ const ProductsDetails = () => {
                     <div className="card_comment p-3">
                         <div className="d-flex justify-content-between align-items-center">
                             <div className="user d-flex flex-row align-items-center">
-                                <img src={c.user.image} alt={c.user.username} width="30" className="user-img rounded-circle mr-2" />
+                                <img src={c.user.avatar} alt={c.user.username} width="30" className="user-img rounded-circle mr-2" />
                                 <span><small className="font-weight-bold text-primary">{c.user.username}</small> <small className="font-weight-bold">{c.content}</small></span>
                             </div>
                             <small><Moment fromNow>{c.created_date}</Moment></small>
                             <div>
-                            <Rating emptySymbol="fa fa-star-o fa-2x"
-                                fullSymbol="fa fa-star fa-2x"
-                                initialRating={c.rate?c.rate:0}
-                                
-                                onClick={rating} />
-                        </div>
+                                <Rating emptySymbol="fa fa-star-o fa-2x"
+                                    fullSymbol="fa fa-star fa-2x"
+                                    initialRating={c.rate?c.rate:0}
+                                    
+                                    onClick={rating} 
+                                />
+                            </div>
 
                         </div>
 

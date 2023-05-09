@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
             return [permissions.IsAuthenticated()]
         elif self.action in ['confirm_register', 'confirm']:
             return [IsSuperAdminOrEmployee()]
-        elif self.action in ['create_shop']:
+        elif self.action in ['create_shop', 'shop']:
             return [IsSellerOrShopOwner()]
         return [permissions.AllowAny()]
 
@@ -81,28 +81,36 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
         notice.save()
         return Response(ConfirmUserSerializer(u).data)
 
-    @action(methods=['post'], detail=False, url_path='create-shop')
-    def create_shop(self, request):
-        name = request.data['name']
-        avatar = request.data['avatar']
-        if not avatar:
-            avatar = "/fukimedia/default/local-store_kj6ybp.png"
-        if name:
-            try:
-                s = Shop(
-                    name=name,
-                    description=request.data['description'],
-                    avatar=avatar,
-                    user=request.user
-                )
-                s.save()
-            except IntegrityError:
-                error_msg = 'Tên cửa hàng đã tồn tại !!!'
-            else:
-                return Response(ShopDetailSerializer(s).data, status=status.HTTP_201_CREATED)
-        else:
-            error_msg = 'Bạn cần phải nhập tên cửa hàng !!!'
-        return Response({'error': error_msg}, status=status.HTTP_400_BAD_REQUEST)
+    @action(methods=['get'], detail=False, url_path='shop')
+    def shop(self, request):
+        try:
+            s = Shop.objects.filter(user=request.user)
+            return Response(ShopSerializer(s, many=True).data, status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # @action(methods=['post'], detail=False, url_path='create-shop')
+    # def create_shop(self, request):
+    #     name = request.data['name']
+    #     avatar = request.data['avatar']
+    #     if not avatar:
+    #         avatar = "/fukimedia/default/local-store_kj6ybp.png"
+    #     if name:
+    #         try:
+    #             s = Shop(
+    #                 name=name,
+    #                 description=request.data['description'],
+    #                 avatar=avatar,
+    #                 user=request.user
+    #             )
+    #             s.save()
+    #         except IntegrityError:
+    #             error_msg = 'Tên cửa hàng đã tồn tại !!!'
+    #         else:
+    #             return Response(ShopDetailSerializer(s).data, status=status.HTTP_201_CREATED)
+    #     else:
+    #         error_msg = 'Bạn cần phải nhập tên cửa hàng !!!'
+    #     return Response({'error': error_msg}, status=status.HTTP_400_BAD_REQUEST)
 
     #Giỏ hàng
     @action(methods=['get'], detail=False, url_path='cart')
