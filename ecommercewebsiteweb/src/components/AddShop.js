@@ -5,6 +5,7 @@ import { Button, Form, Spinner } from "react-bootstrap"
 import ErrorAlert from "../layouts/ErrorAlert"
 import InputItem from "../layouts/InputItem"
 import cookie from "react-cookies"
+import { useRef } from "react"
 
 const AddShop = () => {
     const [shop, setShop] = useState({
@@ -12,6 +13,7 @@ const AddShop = () => {
         "description": "",
 
     })
+    const image = useRef()
     const [loading, setLoading] = useState(false)
     const [err, setErr] = useState("")
     const nav = useNavigate()
@@ -24,6 +26,8 @@ const AddShop = () => {
                 let form = new FormData()
                 form.append("name", shop.name)
                 form.append("description", shop.description)
+                if (image.current.files.length > 0)
+                    form.append("avatar", image.current.files[0])
     
                 let res = await authAPI().post(endpoints['addShops'], form, {
                     headers: {
@@ -72,6 +76,7 @@ const AddShop = () => {
                             name="name" setValue={setValue} />
                 <InputItem label="Mô tả cửa hàng" type="text" value={shop.description} 
                             name="description" setValue={setValue} />
+                <InputItem label="Ảnh cửa hàng" type="file" ref={image} name="image" />
             
                 {loading?<Spinner />:<Button variant="primary" type="submit">Tạo</Button>}
             </Form>

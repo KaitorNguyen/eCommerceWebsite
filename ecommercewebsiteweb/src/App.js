@@ -19,6 +19,7 @@ import Purchase from './components/Purchase';
 import AddShop from './components/AddShop';
 import ListYourShop from './components/ListYourShop';
 import AddProduct from './components/AddProduct';
+import ProfileUser from './components/ProfileUser';
 moment().local("vi")
 
 function App() {
@@ -39,7 +40,9 @@ function App() {
             <Route path='/products/:productsId/purchase' element={<Purchase />} />
             <Route path='/add-shop' element={<AddShop />}/>
             <Route path='/users/shops' element={<ListYourShop/>} />
+            <Route path='/users/current-user' element={<ProfileUser/>} />
             <Route path='/shops/:shopsId/add-product' element={<AddProduct/>} />
+
           </Routes>
         </Container>
         <Footer />

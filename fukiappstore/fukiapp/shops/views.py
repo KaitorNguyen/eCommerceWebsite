@@ -38,10 +38,10 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
         u = request.user
         if request.method.__eq__('PUT'):
             for k, v in request.data.items():
-                if k.__eq__('password'):
-                    u.set_password(v)
-                else:
-                    setattr(u, k, v)
+                # if k.__eq__('password'):
+                #     u.set_password(v)
+                # else:
+                setattr(u, k, v)
             u.save()
         return Response(UserSerializer(u).data)
     @action(methods=['post'], detail=False, url_path='change-password')
@@ -92,9 +92,14 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     # @action(methods=['post'], detail=False, url_path='create-shop')
     # def create_shop(self, request):
     #     name = request.data['name']
-    #     avatar = request.data['avatar']
-    #     if not avatar:
-    #         avatar = "/fukimedia/default/local-store_kj6ybp.png"
+    #     # avatar = request.data['avatar']
+    #     # if not avatar:
+    #     #     avatar = "/fukimedia/default/local-store_kj6ybp.png"
+    #     if 'avatar' in request.POST:
+    #         avatar = request.POST['avatar']
+    #     else:
+    #         avatar = "/default/local-store_kj6ybp.png"
+    #
     #     if name:
     #         try:
     #             s = Shop(
@@ -175,23 +180,28 @@ class ShopViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView
             return Response(ShopDetailSerializer(s).data)
 
         if request.method.__eq__('POST'):
-            try:
-                data = request.data
-                c = Category.objects.get(id=data['category'])
-                p = Product(
-                    name=data['name'],
-                    price=data['price'],
-                    image=data['image'],
-                    description=data['description'],
-                    category=c,
-                    shop=s,
-                )
-                p.save()
-            except IntegrityError:
-                return Response({'error': 'Sản phẩm đã tồn tại trong cửa hàng.'}, status=status.HTTP_400_BAD_REQUEST)
-            except ValidationError as e:
-                return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
-            return Response(CreateProductShopSerializer(p).data, status=status.HTTP_201_CREATED)
+            if 'image' in request.data:
+                image = request.data['image']
+                try:
+                    data = request.data
+                    c = Category.objects.get(id=data['category'])
+                    p = Product(
+                        name=data['name'],
+                        price=data['price'],
+                        image=image,
+                        description=data['description'],
+                        category=c,
+                        shop=s,
+                    )
+                    p.save()
+                except IntegrityError:
+                    return Response({'error': 'Sản phẩm đã tồn tại trong cửa hàng.'}, status=status.HTTP_400_BAD_REQUEST)
+                except ValidationError as e:
+                    return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(CreateProductShopSerializer(p).data, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'error': 'Bạn cần phải thêm ảnh sản phẩm.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # return Response(ProductSerializer(products, many=True).data)
 

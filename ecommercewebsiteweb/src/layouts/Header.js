@@ -23,6 +23,7 @@ const Header = () => {
     let aboutUs = `/aboutus`
     let addShop = `/add-shop`
     let listYourShop = `/users/shops`
+    let profileUser = `/users/current-user`
 
     const search = (evt) => {
         evt.preventDefault()
@@ -57,10 +58,10 @@ const Header = () => {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu variant="secondary">
-                    <Dropdown.Item href="#/action-1"> Thông tin cá nhân </Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Đổi mật khẩu</Dropdown.Item>
+                    <Dropdown.Item> <Link className="nav nav-link" to={profileUser}> Thông tin cá nhân </Link> </Dropdown.Item>
+                    <Dropdown.Item> <Link className="nav nav-link" to={profileUser}> Đổi mật khẩu </Link> </Dropdown.Item>
                     {user.groups[0].name === "Seller" || user.groups[0].name === "Employee" ? 
-                        <Dropdown.Item><Link className="nav nav-link" to={listYourShop}> Cửa hàng của bạn </Link></Dropdown.Item> : null}
+                        <Dropdown.Item> <Link className="nav nav-link" to={listYourShop}> Cửa hàng của bạn </Link></Dropdown.Item> : null}
                     <Dropdown.Divider />
                     <Dropdown.Item>
                         <Button onClick={logout} className="btn btn-danger"> Đăng xuất </Button>

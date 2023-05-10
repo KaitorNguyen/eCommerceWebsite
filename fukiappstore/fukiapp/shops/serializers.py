@@ -78,8 +78,9 @@ class ShopDetailSerializer(ShopSerializer):
         requests = self.context.get('request')
         if requests:
             data = validated_data.copy()
-            data['user_id'] = requests.user.id
+            # data['user_id'] = requests.user.id
             s = Shop(**data)
+            s.user = requests.user
             if not s.avatar:
                 s.avatar = "/default/local-store_kj6ybp.png"
             s.active = True

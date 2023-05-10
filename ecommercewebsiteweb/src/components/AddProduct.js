@@ -1,13 +1,14 @@
 import { useEffect, useRef } from "react"
 import { useState } from "react"
 import { Button, Form } from "react-bootstrap"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import InputItem from "../layouts/InputItem"
 import Spinner from "./Spinner"
 import API, { authAPI, endpoints } from "../configs/API"
 import ErrorAlert from "../layouts/ErrorAlert"
 
-const AddProduct = () =>{
+const AddProduct = () => {
+    const {shopsId} = useParams()
     const [categories, setCategories] = useState([])
     const [product, setProduct] = useState({
         "name": "",
@@ -42,13 +43,15 @@ const AddProduct = () =>{
                 if (image.current.files.length > 0)
                     form.append("image", image.current.files[0])
 
-                let res = await authAPI().post(endpoints['addProduct'], form, {
+                let res = await authAPI().post(endpoints['addProduct'](shopsId), form, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
+
+                let url_shop = `/shops/${shopsId}/products`
                 if (res.status === 201)
-                    nav("/")
+                    nav(url_shop)
                 else
                     setErr("Hệ thống đang có lỗi! Vui lòng quay lại sau!")
 
@@ -62,8 +65,12 @@ const AddProduct = () =>{
             }
         }
 
-        setLoading(true)
-        process()
+        if(product.name === "" || product.price === "" || selectedCategory === "")
+            setErr("Dữ liệu không được phép để trống")
+        else {
+            setLoading(true)
+            process()
+        }
     }
 
     const setValue = e => {
@@ -86,7 +93,7 @@ const AddProduct = () =>{
                 <Form.Group className="mb-3" controlId="formGridState">
                     <Form.Label>Loại sản phẩm</Form.Label>
                     <Form.Select value={selectedCategory} onChange={(e)=>setSelectedCategory(e.target.value)}>
-                        {/* <option disabled>Lựa chọn ...</option> */}
+                        <option>Lựa chọn ...</option>
                         {categories.map(c => {
                             return (
                                 <option key={c.id} value={c.id}>{c.name}</option>
