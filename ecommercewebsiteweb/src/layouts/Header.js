@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router-dom"
 import API, { endpoints } from "../configs/API"
 import { useContext } from "react"
 import { MyUserContext } from "../configs/MyContext"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faCartShopping } from '@fortawesome/free-solid-svg-icons'
+
 
 const Header = () => {
     const [categories, setCategories] = useState([])
@@ -24,6 +27,7 @@ const Header = () => {
     let addShop = `/add-shop`
     let listYourShop = `/users/shops`
     let profileUser = `/users/current-user`
+    
 
     const search = (evt) => {
         evt.preventDefault()
@@ -64,7 +68,7 @@ const Header = () => {
                         <Dropdown.Item> <Link className="nav nav-link" to={listYourShop}> Cửa hàng của bạn </Link></Dropdown.Item> : null}
                     <Dropdown.Divider />
                     <Dropdown.Item>
-                        <Button onClick={logout} className="btn btn-danger"> Đăng xuất </Button>
+                      <Link to={homePageUrl}>  <Button  onClick={logout} className="btn btn-danger"> Đăng xuất </Button></Link>
                     </Dropdown.Item>
                 </Dropdown.Menu>
                 </Dropdown>
@@ -108,6 +112,7 @@ const Header = () => {
                             <Button className="search_button" type="submit" variant="outline-success">Tìm Kiếm</Button>
                         </Form>
                     </Navbar.Collapse>
+                    <FontAwesomeIcon  className="cart" icon={faCartShopping} />
                 </Container>
             </Navbar>
         </>

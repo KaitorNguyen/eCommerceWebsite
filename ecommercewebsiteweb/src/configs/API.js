@@ -13,7 +13,8 @@ export const endpoints = {
     "addShops": "/shops/",
     "reviews" : (productsId) => `/products/${productsId}/reviews/`,
     "your-shop": "/users/shop/",
-    "addProduct": (shopsId) => `/shops/${shopsId}/products/`
+    "addProduct": (shopsId) => `/shops/${shopsId}/products/`,
+    "addToCart" :(productsId) => `/products/${productsId}/add-to-cart/`
 
 }
 

@@ -15,7 +15,7 @@ import cookie from "react-cookies";
 import Register from './components/Register';
 import moment from 'moment';
 import 'moment/locale/vi';
-import Purchase from './components/Purchase';
+
 import AddShop from './components/AddShop';
 import ListYourShop from './components/ListYourShop';
 import AddProduct from './components/AddProduct';
@@ -37,7 +37,6 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
             <Route path='/shops/:shopsId/products' element={<Shops />} />
-            <Route path='/products/:productsId/purchase' element={<Purchase />} />
             <Route path='/add-shop' element={<AddShop />}/>
             <Route path='/users/shops' element={<ListYourShop/>} />
             <Route path='/users/current-user' element={<ProfileUser/>} />

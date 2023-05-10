@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Spinner from "./Spinner"
 import API, { authAPI, endpoints } from "../configs/API"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import Moment from "react-moment"
 import { Button, Form } from "react-bootstrap"
 import { useContext } from "react"
@@ -19,34 +19,41 @@ const ProductsDetails = () => {
     const [user,] = useContext(MyUserContext)
     const [reviews, SetReviews] = useState(null)
     const [rate, SetRate] = useState(0)
+    const [cart,setCart] = useState([])
+    const [err, setErr] = useState("")
+    const nav = useNavigate()
 
     useEffect(() => {
         const loadProductDetail = async () => {
             let res = await authAPI().get(endpoints['product-details'](productsId))
             setProductDetails(res.data)
-            console.info(res.data)
+            
         }
         loadProductDetail()
 
 
     }, [productsId])
-
-
-    useEffect(() => {
-        const loadComments = async () => {
-            let res = await API.get(endpoints['comments'](productsId))
-            SetComments(res.data)
-        }
-        loadComments()
-    }, [productsId])
-
-    useEffect(() => {
-        const loadReviews = async () => {
-            let res = await API.get(endpoints['reviews'](productsId))
-            SetReviews(res.data)
-        }
-        loadReviews()
-    }, [productsId])
+    
+    const addToCart = (evt) => {
+        evt.preventDefault();
+      
+        const process = async () => {
+          try {
+            let res = await authAPI().post(endpoints["addToCart"](productsId))
+            if (res.status === 201) {
+              setCart((current) => [...current, productDetails])
+            } else {
+              setErr(
+                "Hệ thống đang có lỗi! Vui lòng quay lại sau!"
+              );
+            }
+          } catch {}
+        };
+      
+        setLoading(true)
+        process()
+        console.log(cart)
+      }
 
     const addReview = (evt) => {
         evt.preventDefault()
@@ -58,18 +65,35 @@ const ProductsDetails = () => {
                     "rate": rate
                 })
                 SetReviews(current => ([res.data, ...current]))
+            
             } catch {
 
             } finally {
                 SetContentReview("")
                 SetRate()
                 setLoading(false)
+                
             }
         }
         setLoading(true)
         process()
     }
 
+    useEffect(() => {
+        const loadReviews = async () => {
+            let res = await API.get(endpoints['reviews'](productsId))
+            SetReviews(res.data)
+        }
+        loadReviews()
+    }, [productsId])
+
+    useEffect(() => {
+        const loadComments = async () => {
+            let res = await API.get(endpoints['comments'](productsId))
+            SetComments(res.data)
+        }
+        loadComments()
+    }, [productsId])
 
     const addComment = (evt) => {
         evt.preventDefault()
@@ -97,7 +121,6 @@ const ProductsDetails = () => {
    
 
     const rating= (value) =>{
-        alert(value)
         SetRate(value)
 
     }
@@ -110,7 +133,9 @@ const ProductsDetails = () => {
     let url = `/shops/${productDetails.shop.id}/products`
     let homePageUrl = `/`
     return (
+       
         <div>
+           
             <section id="services" className="services section-bg">
                 <div className="container-fluid">
 
@@ -140,8 +165,8 @@ const ProductsDetails = () => {
                                     </div>
 
                                     <div className="mt-2">
-                                        <Link to={`/products/${productsId}/purchase`}>   <button className="button-89" >Mua ngay</button></Link>
-                                        <Link to={homePageUrl}>   <button className="button-89" >Thêm vào giỏ</button></Link>
+                                      <button onClick={addToCart} className="button-89" >Thêm vào giỏ</button>
+                                        <Link to={homePageUrl}>   <button className="button-89" >hihi</button></Link>
                                     </div>
 
                                 </div>
@@ -230,13 +255,3 @@ const ProductsDetails = () => {
     )
 }
 export default ProductsDetails
-
-{/* <Row>
-                        <Col xs={3} md={1}>
-                            <Image src={c.user.image} alt={c.user.username} rounded />
-                        </Col>
-                        <Col xs={9} md={11}>
-                            <p>{c.content}</p>
-                            <small>Được bình luận bởi {c.user.username} vào {c.created_date}</small>
-                        </Col>
-                    </Row> */}

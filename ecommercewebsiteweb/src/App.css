@@ -1672,3 +1672,8 @@ button:focus {
 .rating{
 	margin-left: 200px;
 }
+.cart{
+	margin-left: 100px;
+	width: 100px;
+	height: 30px;
+}
