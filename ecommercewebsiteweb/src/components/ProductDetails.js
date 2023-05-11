@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import Moment from "react-moment"
 import { Button, Form } from "react-bootstrap"
 import { useContext } from "react"
-import { MyUserContext } from "../configs/MyContext"
+import { MyCartContext, MyUserContext } from "../configs/MyContext"
 import Rating from "react-rating"
 import Products from "./Products"
 
@@ -19,7 +19,17 @@ const ProductsDetails = () => {
     const [user,] = useContext(MyUserContext)
     const [reviews, SetReviews] = useState(null)
     const [rate, SetRate] = useState(0)
-    // const [cart,setCart] = useState([])
+    // const [cart, setCart] = useState({
+    //     "product": {
+    //         "name": "",
+    //         "price": ""
+    //     },
+    //     "unit_price": "",
+    //     "quantity": 0
+    // });
+    const [cart, setCart] = useContext(MyCartContext)
+
+
     const [err, setErr] = useState("")
     const nav = useNavigate()
 
@@ -27,36 +37,58 @@ const ProductsDetails = () => {
         const loadProductDetail = async () => {
             let res = await authAPI().get(endpoints['product-details'](productsId))
             setProductDetails(res.data)
-            
+
         }
         loadProductDetail()
 
 
     }, [productsId])
-    
+
     const addToCart = (evt) => {
         evt.preventDefault();
 
+        let form = new FormData();
+        form.append("name", productDetails.name)
+        form.append("unit_price", productDetails.price);
+        form.append("price", parseInt(cart.price * cart.quantity))
+        form.append("quantity", cart.quantity + 1)
         const process = async () => {
             try {
-                let res = await authAPI().post(endpoints['addToCart'](productsId))
-                if (res.status === 201)
-                    console.log("Thêm thành công")
+                let res = await authAPI().post(endpoints['addToCart'](productsId), form, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                if (res.status === 201) {
+                    setCart({
+                        "name": productDetails.name,
+                        "price": (cart.price * cart.quantity),
+                        "quantity": cart.quantity + 1,
+                        "unit_price": (productDetails.price)
+                    });
+                }
+
                 else
                     setErr("Hệ thống đang có lỗi! Vui lòng quay lại sau!")
             } catch (ex) {
-                    let msg = ""
-                    for (let e of Object.values(ex.response.data))
-                        msg += `${e} `
-    
-                    setErr(msg)
+                let msg = ""
+                for (let e of Object.values(ex.response.data))
+                    msg += `${e} `
+
+                setErr(msg)
             } finally {
                 setLoading(false)
             }
         }
         setLoading(true)
         process()
+       
+
     }
+
+
+
+
 
     const addReview = (evt) => {
         evt.preventDefault()
@@ -68,14 +100,14 @@ const ProductsDetails = () => {
                     "rate": rate
                 })
                 SetReviews(current => ([res.data, ...current]))
-            
+
             } catch {
 
             } finally {
                 SetContentReview("")
                 SetRate()
                 setLoading(false)
-                
+
             }
         }
         setLoading(true)
@@ -121,9 +153,9 @@ const ProductsDetails = () => {
     }
 
 
-   
 
-    const rating= (value) =>{
+
+    const rating = (value) => {
         SetRate(value)
 
     }
@@ -136,9 +168,9 @@ const ProductsDetails = () => {
     let url = `/shops/${productDetails.shop.id}/products`
     let homePageUrl = `/`
     return (
-       
+
         <div>
-           
+
             <section id="services" className="services section-bg">
                 <div className="container-fluid">
 
@@ -162,17 +194,13 @@ const ProductsDetails = () => {
                                     </div>
                                     <div className="p-list">
                                         <span> Giá : </span>
-                                        <span className="price">
-                                            {/* {productDetails.price} <i>VND</i> */}
-                                            {Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(productDetails.price)}
-                                        </span>
+                                        <span className="price"> {productDetails.price} <i>VND</i></span>
                                     </div>
                                     <div className="_p-features" dangerouslySetInnerHTML={{ __html: productDetails.description }}>
                                     </div>
 
                                     <div className="mt-2">
-                                        {/* <Button className="button-89" onClick={addToCart}>Thêm vào giỏ</Button> */}
-                                        <button onClick={addToCart} className="button-89" >Thêm vào giỏ</button>
+                                        {loading ? <Spinner /> : <Button variant="primary" onClick={addToCart}>Add To Cart</Button>}
                                         <Link to={homePageUrl}>   <button className="button-89" >hihi</button></Link>
                                     </div>
 
@@ -223,7 +251,7 @@ const ProductsDetails = () => {
                             <Rating emptySymbol="fa fa-star-o fa-2x"
                                 fullSymbol="fa fa-star fa-2x"
                                 initialRating={rate}
-                                onChange={rating} 
+                                onChange={rating}
                             />
                         </div>
                         <input className="comment-input" type="text" value={contentReview} onChange={e => SetContentReview(e.target.value)} placeholder="  nhập nội dung review " />
@@ -246,9 +274,9 @@ const ProductsDetails = () => {
                             <div>
                                 <Rating emptySymbol="fa fa-star-o fa-2x"
                                     fullSymbol="fa fa-star fa-2x"
-                                    initialRating={c.rate?c.rate:0}
-                                    
-                                    onClick={rating} 
+                                    initialRating={c.rate ? c.rate : 0}
+
+                                    onClick={rating}
                                 />
                             </div>
 

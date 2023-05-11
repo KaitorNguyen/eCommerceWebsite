@@ -25,12 +25,9 @@ const Login = () => {
                 let res = await API.post(endpoints['login'], {
                     "username": username,
                     "password": password,
-                    "client_id": "z9iWJZj2v2KUhZUrlVcAxDI6H9AlVpXUMRzCbPaH",
-                    "client_secret": "o31fcr9zXnAevUElQtOqJXzvqHWuw1YmJpbYH1FCXKjAhSMTZZljwk1khOfycorlSsqG4DFFtVMEBTGOXyvDFiznGEucfe2dQaIW5zoNjeVexRDAqXmimyCm5lJNoV1R",
-                    // "client_id": "mQX1eh51uee6DGitLsjbLVZhEpzgFHroVxJKTbWB",
-                    // "client_secret": "1xdu2YW2tVURIvmGsnCZXVEKz9UVlsYvxIirsirLiWMFv5aId6gIHR3FEKJI0tog7jNcj6dafRWYcxVVwmuOiAoopAi3zGXqenug6Ey36861gY3og8581AhA4cy2pfwp",
-                    // "client_id": "YZ7TNH8zBWDdq1jBIItRKi0bqUSy4ihhM1sXrFRq",
-                    // "client_secret": "wBJYS4MwNRzaAbU0nuS6L7pnTDlwx92WyEi3nDLqrsg3Fd3kTbQb8BSvSfxbrPWj1ZDsc3ABgmOUYS05YJDuCcBcaA4l13WLkOoczkxKmyvxhUJezn4RDybF9CF1JPqp",
+                    "client_id": "osbfYNK4OGzIQKg2fqkjBHJ0LcsTRpYyzaZg2ehQ",
+                    "client_secret": "WVaIZVIJ0aJBwYabL59VPyCV3iVOta7YoT0HTNY6gzrTCG2ISXhvjww9bC71Dq37Jpxoc5KSWGyAQXrCIByiilg1DfO4gODQPD4RpATmySbEvoq3PVU0FDuhUPw6CEWb",
+                   
                     "grant_type": "password"
 
                 })
@@ -90,7 +87,7 @@ const Login = () => {
 
             </Form> */}
             {err ? <ErrorAlert err={err} /> : ""}
-
+                
             <Form onSubmit={login}>
                 <div className="login_center">
                     <div className='bold-line'>

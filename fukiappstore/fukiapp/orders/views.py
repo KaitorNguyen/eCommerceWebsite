@@ -19,7 +19,7 @@ class PaymentMethodViewSet(viewsets.ViewSet, generics.ListAPIView):
 class CartProductViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = shops.models.Product.objects.filter(active=True)
     serializer_class = CartItemSerializer
-    permission_classes = [permissions.IsAuthenticated()]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(methods=['post'], detail=True, url_path='add-to-cart')
     def add_to_cart(self, request, pk):
