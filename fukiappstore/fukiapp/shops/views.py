@@ -121,21 +121,27 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     @action(methods=['get'], detail=False, url_path='cart')
     def cart(self, request):
         u = request.user
-        try:
-            cart = orders.models.Cart.objects.filter(is_completed=False, user=u).first()
-            return Response(orders.serializers.CartSerializer(cart).data)
-        except:
+        if u:
+            try:
+                cart = orders.models.Cart.objects.filter(is_completed=False, user=u).first()
+                return Response(orders.serializers.CartSerializer(cart).data)
+            except:
+                return Response({'error': 'Hệ thống đang bảo trì'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
             return Response({'error': 'Bạn cần phải đăng nhập!!!'}, status=status.HTTP_400_BAD_REQUEST)
 
     #Danh sách đơn hàng đã đặt
     @action(methods=['get'], detail=False, url_path='orders')
     def orders(self, request):
         u = request.user
-        try:
-            o = orders.models.Order.objects.filter(user=u)
-            return Response(orders.serializers.OrderBaseSerializer(o, many=True).data)
-        except:
-            Response({'error': 'Bạn cần phải đăng nhập!!!'}, status=status.HTTP_400_BAD_REQUEST)
+        if u:
+            try:
+                o = orders.models.Order.objects.filter(user=u)
+                return Response(orders.serializers.OrderBaseSerializer(o, many=True).data)
+            except:
+                return Response({'error': 'Hệ thống đang bảo trì'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'Bạn cần phải đăng nhập!!!'}, status=status.HTTP_400_BAD_REQUEST)
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()

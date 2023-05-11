@@ -19,7 +19,7 @@ const ProductsDetails = () => {
     const [user,] = useContext(MyUserContext)
     const [reviews, SetReviews] = useState(null)
     const [rate, SetRate] = useState(0)
-    const [cart,setCart] = useState([])
+    // const [cart,setCart] = useState([])
     const [err, setErr] = useState("")
     const nav = useNavigate()
 
@@ -36,24 +36,27 @@ const ProductsDetails = () => {
     
     const addToCart = (evt) => {
         evt.preventDefault();
-      
+
         const process = async () => {
-          try {
-            let res = await authAPI().post(endpoints["addToCart"](productsId))
-            if (res.status === 201) {
-              setCart((current) => [...current, productDetails])
-            } else {
-              setErr(
-                "Hệ thống đang có lỗi! Vui lòng quay lại sau!"
-              );
+            try {
+                let res = await authAPI().post(endpoints['addToCart'](productsId))
+                if (res.status === 201)
+                    console.log("Thêm thành công")
+                else
+                    setErr("Hệ thống đang có lỗi! Vui lòng quay lại sau!")
+            } catch (ex) {
+                    let msg = ""
+                    for (let e of Object.values(ex.response.data))
+                        msg += `${e} `
+    
+                    setErr(msg)
+            } finally {
+                setLoading(false)
             }
-          } catch {}
-        };
-      
+        }
         setLoading(true)
         process()
-        console.log(cart)
-      }
+    }
 
     const addReview = (evt) => {
         evt.preventDefault()
@@ -159,13 +162,17 @@ const ProductsDetails = () => {
                                     </div>
                                     <div className="p-list">
                                         <span> Giá : </span>
-                                        <span className="price"> {productDetails.price} <i>VND</i></span>
+                                        <span className="price">
+                                            {/* {productDetails.price} <i>VND</i> */}
+                                            {Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(productDetails.price)}
+                                        </span>
                                     </div>
                                     <div className="_p-features" dangerouslySetInnerHTML={{ __html: productDetails.description }}>
                                     </div>
 
                                     <div className="mt-2">
-                                      <button onClick={addToCart} className="button-89" >Thêm vào giỏ</button>
+                                        {/* <Button className="button-89" onClick={addToCart}>Thêm vào giỏ</Button> */}
+                                        <button onClick={addToCart} className="button-89" >Thêm vào giỏ</button>
                                         <Link to={homePageUrl}>   <button className="button-89" >hihi</button></Link>
                                     </div>
 

@@ -15,7 +15,13 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)
+    total_product = serializers.SerializerMethodField()
     total_price = serializers.SerializerMethodField()
+
+    def get_total_product(self, cart):
+        c = CartItem.objects.filter(cart=cart)
+        q = c.aggregate(Sum('quantity'))['quantity__sum']
+        return q
 
     def get_total_price(self, cart):
         items = CartItem.objects.filter(cart=cart)
@@ -25,7 +31,7 @@ class CartSerializer(serializers.ModelSerializer):
         return total_price
     class Meta:
         model = Cart
-        fields = ['id', 'user_id', 'is_completed', 'items', 'total_price']
+        fields = ['id', 'user_id', 'is_completed', 'items', 'total_product', 'total_price']
 
 class PaymentMethodSerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,6 +65,7 @@ class StatisProductSerializer(serializers.ModelSerializer):
     sold_product = serializers.SerializerMethodField(read_only=True)
     revenue = serializers.SerializerMethodField(read_only=True)
     def get_sold_product(self, product):
+        # Product.objects.annotate(count=Sum('orderdetail__quantity'))
         order_pro = OrderDetail.objects.filter(product=product)
         quantity = order_pro.aggregate(quant_sum=Sum('quantity'))
         return quantity['quant_sum'] if quantity else 0
@@ -69,16 +76,26 @@ class StatisProductSerializer(serializers.ModelSerializer):
         return quantity * product.price if quantity else 0
     class Meta:
         model = shops.models.Product
-        fields = ['id', 'name', 'price', 'sold_product', 'revenue']
+        fields = ['id', 'name', 'price', 'sold_product', 'revenue', 'shop_id']
 class StatisShopSerializer(serializers.ModelSerializer):
     total_product = serializers.SerializerMethodField(read_only=True)
     total_revenue = serializers.SerializerMethodField(read_only=True)
+    proshop = StatisProductSerializer(many=True, read_only=True)
+
+    #Sản phẩm trong cửa hàng
     def get_total_product(self, obj):
         return shops.models.Product.objects.filter(shop=obj).count()
 
+    #Tổng doanh thu
     def get_total_revenue(self, shop):
-        return 0
+        products = shop.proshop.all()
+        total = 0
+        for p in products:
+            quantity_sold = shops.models.Product.objects.filter(id=p.id).annotate(sum=Sum('orderdetail__quantity'))
+            total_price_sold = quantity_sold[0].sum * p.price if quantity_sold[0].sum else 0
+            total += total_price_sold
+        return total
 
     class Meta:
         model = shops.models.Shop
-        fields = ['id', 'name', 'total_product', 'total_revenue']
+        fields = ['id', 'name', 'total_product', 'total_revenue', 'proshop']

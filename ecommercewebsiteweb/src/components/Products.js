@@ -85,7 +85,10 @@ const Products = () => {
                                         <Card.Img variant="top" src={c.image} />
                                         <Card.Body>
                                             <Card.Title className="text-center ovf" key={c.id} >{c.name}</Card.Title>
-                                            <h1 className="text-center ovf">{c.price}</h1>
+                                            <h1 className="text-center ovf">
+                                                {/* {c.price} */}
+                                                {Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(c.price)}
+                                            </h1>
                                         </Card.Body>
                                     </Card>
                                 </Link>

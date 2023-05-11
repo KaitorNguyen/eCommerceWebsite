@@ -95,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fukidb',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': '12345678',
         'HOST': ''
     }
 }
@@ -165,6 +165,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CLIENT_ID = 'mQX1eh51uee6DGitLsjbLVZhEpzgFHroVxJKTbWB'
 CLIENT_SECRET = '1xdu2YW2tVURIvmGsnCZXVEKz9UVlsYvxIirsirLiWMFv5aId6gIHR3FEKJI0tog7jNcj6dafRWYcxVVwmuOiAoopAi3zGXqenug6Ey36861gY3og8581AhA4cy2pfwp'
 
-OAUTH2_PROVIDER = {
-    'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore'
-}
+# OAUTH2_PROVIDER = {
+#     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore'
+# }
