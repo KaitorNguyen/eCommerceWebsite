@@ -40,6 +40,7 @@ const Header = () => {
     let addShop = `/add-shop`
     let listYourShop = `/users/shops`
     let profileUser = `/users/current-user`
+    let listUserRegister = `/users/confirm-register`
 
 
     const search = (evt) => {
@@ -80,6 +81,8 @@ const Header = () => {
                         <Dropdown.Item> <Link className="nav nav-link" to={profileUser}> Đổi mật khẩu </Link> </Dropdown.Item>
                         {user.groups[0].name === "Seller" || user.groups[0].name === "Employee" ?
                             <Dropdown.Item> <Link className="nav nav-link" to={listYourShop}> Cửa hàng của bạn </Link></Dropdown.Item> : null}
+                        {user.groups[0].name === "Employee" ? 
+                            <Dropdown.Item> <Link className="nav nav-link" to={listUserRegister}> Danh sách đăng ký </Link></Dropdown.Item> : null}
                         <Dropdown.Divider />
                         <Dropdown.Item>
                             <Link to={homePageUrl}>  <Button onClick={logout} className="btn btn-danger"> Đăng xuất </Button></Link>

@@ -11,6 +11,7 @@ from .serializers import (
 )
 from .permis import IsCartOwner
 import random
+from django.db.models import Sum
 
 # Create your views here.
 class PaymentMethodViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -117,13 +118,42 @@ class CartViewSet(viewsets.ViewSet):
 class OrderViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [permissions.IsAuthenticated()]
+    permission_classes = [permissions.IsAuthenticated]
 
 class StatisViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = shops.models.Product.objects.filter(active=True)
     serializer_class = StatisProductSerializer
-    permission_classes = [permissions.IsAuthenticated()]
+    permission_classes = [permissions.IsAuthenticated]
     @action(methods=['get'], detail=False, url_path='shops')
     def shops(self, request):
-        s = shops.models.Shop.objects.filter(active=True, user=request.user)
-        return Response(StatisShopSerializer(s, many=True).data)
+        # user = request.user
+        # shops_user = user.shops.filter(active=True)
+        # for s in shops_user:
+        #     products = s.proshop.filter(active=True)
+        # # orders = Order.objects.filter(status='C')
+        #     for p in products:
+        #         quantity_sold = p.orderdetail_set.aggregate(Sum('quantity'))['quantity__sum']
+
+
+        shops_user = shops.models.Shop.objects.filter(active=True, user=request.user)
+
+        total_revenue = 0
+        for s in shops_user:
+            products = s.proshop.all()
+            total = 0
+            orders = Order.objects.filter(status='C')
+            for order in orders:
+                for p in products:
+                    quantity_sold = OrderDetail.objects.filter(order=order, product=p).aggregate(Sum('quantity'))['quantity__sum']
+                    total_price_sold = quantity_sold * p.price if quantity_sold else 0
+                    total += total_price_sold
+            total_revenue += total
+
+        #Doanh thu theo tháng
+        month = request.query_params.get('month')
+
+        data = {
+            'total_revenue_all': total_revenue,
+            'shop_user': StatisShopSerializer(shops_user, many=True).data
+        }
+        return Response(data, status=status.HTTP_200_OK)

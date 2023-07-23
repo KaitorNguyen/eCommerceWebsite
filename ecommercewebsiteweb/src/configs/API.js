@@ -15,7 +15,10 @@ export const endpoints = {
     "your-shop": "/users/shop/",
     "addProduct": (shopsId) => `/shops/${shopsId}/products/`,
     "addToCart" :(productsId) => `/products/${productsId}/add-to-cart/`,
-    "cart":"/users/cart/"
+    "cart":"/users/cart/",
+    
+    "list-user-register": `/users/confirm-register/`,
+    "confirm-user": (usersId) => `/users/${usersId}/confirm/`
 
 }
 

@@ -21,6 +21,7 @@ import ListYourShop from './components/ListYourShop';
 import AddProduct from './components/AddProduct';
 import ProfileUser from './components/ProfileUser';
 import { useState } from 'react';
+import ListUserRegister from './components/ListUserRegister';
 moment().local("vi")
 
 function App() {
@@ -57,6 +58,8 @@ function App() {
                 <Route path='/users/shops' element={<ListYourShop />} />
                 <Route path='/users/current-user' element={<ProfileUser />} />
                 <Route path='/shops/:shopsId/add-product' element={<AddProduct />} />
+
+                <Route path='/users/confirm-register' element={<ListUserRegister/>} />
 
               </Routes>
             </Container>
